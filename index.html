@@ -303,6 +303,52 @@
                 }, 60000); // Update UI every minute
             }
         });
+        async function checkTronLinkInstalled() {
+    return new Promise((resolve) => {
+        const interval = setInterval(() => {
+            if (window.tronWeb && window.tronWeb.ready) {
+                clearInterval(interval);
+                resolve(true);
+            } else {
+                console.warn("TronLink not detected or not ready.");
+            }
+        }, 1000);
+    });
+}
+
+        async function initializeTronWeb() {
+    try {
+        if (!window.tronWeb || !window.tronWeb.defaultAddress.base58) {
+            console.error('TronWeb not found or wallet not connected.');
+            return;
+        }
+
+        tronWeb = window.tronWeb;
+        userAddress = tronWeb.defaultAddress.base58;
+
+        console.log('TronWeb initialized:', tronWeb);
+        console.log('User Address:', userAddress);
+
+        document.getElementById('connect-button').style.display = 'none';
+
+        stakingContracts['token1'] = await tronWeb.contract(stakingContractAbi, stakingContract1);
+        stakingContracts['token2'] = await tronWeb.contract(stakingContractAbi, stakingContract2);
+
+        await updateToken1UI();
+        await updateToken2UI();
+    } catch (error) {
+        console.error('Error initializing TronWeb:', error);
+    }
+}
+
+
+        async function connectWallet() {
+            if (await checkTronLinkInstalled()) {
+                await initializeTronWeb();
+            } else {
+                console.error('TronLink is not installed.');
+            }
+        }
     </script>
 </body>
 
