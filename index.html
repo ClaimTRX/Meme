@@ -264,6 +264,9 @@
                     <h5 class="card-title mt-3">Claimable TRX Rewards</h5>
                     <p class="card-text" id="claimable-rewards-token1">Loading...</p>
                     <button id="claim-rewards-button-token1" class="btn btn-success">Claim Rewards</button>
+
+                    <h5 class="card-title mt-3">Expected Daily, Monthly, Yearly Rewards</h5>
+                    <p class="card-text" id="expected-rewards-token1">Loading...</p>
                 </div>
 
                 <div class="card-image-container">
@@ -277,111 +280,32 @@
             </div>
         </div>
 
-        <!-- Card for $BBT -->
-        <div class="card mt-4">
-            <div class="card-body">
-                <div class="card-text-section">
-                    <h5 class="card-title">Stake your $BBT for BBT rewards</h5>
-                    <input type="number" id="stake-amount-token2" class="form-control" placeholder="Enter amount to stake">
-                    <button id="stake-button-token2" class="btn btn-success">Stake</button><br>
-                    <button id="unstake-button-token2" class="btn btn-danger">Unstake</button>
-
-                    <h5 class="card-title mt-3">Total Staked $BBT</h5>
-                    <p class="card-text" id="total-staked-token2">Loading...</p>
-
-                    <h5 class="card-title mt-3">Your Staked $BBT</h5>
-                    <p class="card-text" id="staked-amount-token2">Loading...</p>
-
-                    <h5 class="card-title mt-3">Your Staked Percentage</h5>
-                    <p class="card-text" id="staked-percentage-token2">Loading...</p>
-
-                    <h5 class="card-title mt-3">Claimable BBT Rewards</h5>
-                    <p class="card-text" id="claimable-rewards-token2">Loading...</p>
-                    <button id="claim-rewards-button-token2" class="btn btn-success">Claim Rewards</button>
-                </div>
-
-                <div class="card-image-container">
-                    <img src="https://raw.githubusercontent.com/ClaimTRX/Test/main/66cf0a6d09572_download.jpg" class="card-image" alt="Token Image">
-                    <div class="telegram-link">
-                        <a href="https://t.me/babyturu" target="_blank">
-                            <i class="fab fa-telegram-plane"></i> Join our Telegram
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+       
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tronweb/dist/TronWeb.min.js"></script>
     <script src="stakingContracts1.js"></script>
-    <script src="stakingContracts2.js"></script>
+    
     <script>
-        // Additional common JavaScript code if needed
         document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('connect-button').addEventListener('click', connectWallet);
             if (await checkTronLinkInstalled()) {
                 await initializeTronWeb();
                 setTimeout(async () => {
                     await updateToken1UI();
-                    await updateToken2UI();
+                    
                 }, 4000); // 4-second delay on initial load
                 setInterval(async () => {
                     await updateToken1UI();
-                    await updateToken2UI();
+                    
                 }, 60000); // Update UI every minute
             }
         });
-
-        async function checkTronLinkInstalled() {
-    return new Promise((resolve) => {
-        const interval = setInterval(() => {
-            if (window.tronWeb && window.tronWeb.ready) {
-                clearInterval(interval);
-                resolve(true);
-            } else {
-                console.warn("TronLink not detected or not ready.");
-            }
-        }, 1000);
-    });
-}
-
-        async function initializeTronWeb() {
-    try {
-        if (!window.tronWeb || !window.tronWeb.defaultAddress.base58) {
-            console.error('TronWeb not found or wallet not connected.');
-            return;
-        }
-
-        tronWeb = window.tronWeb;
-        userAddress = tronWeb.defaultAddress.base58;
-
-        console.log('TronWeb initialized:', tronWeb);
-        console.log('User Address:', userAddress);
-
-        document.getElementById('connect-button').style.display = 'none';
-
-        stakingContracts['token1'] = await tronWeb.contract(stakingContractAbi, stakingContract1);
-        stakingContracts['token2'] = await tronWeb.contract(stakingContractAbi, stakingContract2);
-
-        await updateToken1UI();
-        await updateToken2UI();
-    } catch (error) {
-        console.error('Error initializing TronWeb:', error);
-    }
-}
-
-
-        async function connectWallet() {
-            if (await checkTronLinkInstalled()) {
-                await initializeTronWeb();
-            } else {
-                console.error('TronLink is not installed.');
-            }
-        }
     </script>
 </body>
 
 </html>
+
 
