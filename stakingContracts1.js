@@ -746,40 +746,67 @@ async function initializeTronWeb() {
     }
 }
 
-// Update staked amount
+// Function to check if TronLink is installed
+async function checkTronLinkInstalled() {
+    return new Promise((resolve) => {
+        const interval = setInterval(() => {
+            if (window.tronWeb && window.tronWeb.ready) {
+                clearInterval(interval);
+                resolve(true);
+            } else {
+                console.warn("TronLink not detected or not ready.");
+            }
+        }, 1000);
+    });
+}
+
+// Function to connect the wallet
+async function connectWallet() {
+    if (await checkTronLinkInstalled()) {
+        await initializeTronWeb();
+    } else {
+        console.error('TronLink is not installed.');
+    }
+}
+
+// Function to update the staked amount
 async function updateStakedAmount() {
     try {
         const stakedAmountRaw = await stakingContract.methods.viewStakedAmount(userAddress).call();
         const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
         const decimals = await tokenContract.methods.decimals().call();
         const stakedAmount = stakedAmountRaw / Math.pow(10, decimals);
-        document.getElementById('staked-amount').innerText = formatWholeNumber(stakedAmount);
+        document.getElementById('staked-amount-token1').innerText = formatWholeNumber(stakedAmount);
     } catch (error) {
         console.error('Error fetching staked amount:', error);
     }
 }
 
-// Update claimable rewards
+// Function to update claimable rewards
 async function updateClaimableRewards() {
     try {
         const claimableRewardsRaw = await stakingContract.methods.viewPendingReward(userAddress).call();
         const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
         const decimals = await tokenContract.methods.decimals().call();
         const claimableRewards = claimableRewardsRaw / Math.pow(10, decimals);
-        document.getElementById('claimable-rewards').innerText = formatNumber(claimableRewards);
+        document.getElementById('claimable-rewards-token1').innerText = formatNumber(claimableRewards);
     } catch (error) {
         console.error('Error fetching claimable rewards:', error);
     }
 }
 
-// Update projected monthly earnings
+// Function to update projected monthly earnings
 async function updateProjectedMonthlyEarnings() {
     try {
         const projectedRewards = await stakingContract.methods.viewExpectedRewards(userAddress).call();
         const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
         const decimals = await tokenContract.methods.decimals().call();
         const monthlyEarnings = projectedRewards.monthly / Math.pow(10, decimals);
-        document.getElementById('projected-monthly-earnings').innerText = formatNumber(monthlyEarnings);
+        document.getElementById('expected-rewards-token1').innerText = `
+            Daily: ${formatNumber(projectedRewards.daily / Math.pow(10, decimals))} TRX, 
+            Monthly: ${formatNumber(monthlyEarnings)} TRX, 
+            Yearly: ${formatNumber(projectedRewards.yearly / Math.pow(10, decimals))} TRX
+        `;
     } catch (error) {
         console.error('Error fetching projected monthly earnings:', error);
     }
@@ -794,7 +821,7 @@ function formatWholeNumber(num) {
     return Math.floor(parseFloat(num)).toLocaleString('en-US');
 }
 
-// Add Event Listeners for the connect button
+// Event listener for the connect button
 document.getElementById('connect-button').addEventListener('click', async () => {
-    await initializeTronWeb();
+    await connectWallet();
 });
