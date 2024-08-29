@@ -769,6 +769,87 @@ async function connectWallet() {
     }
 }
 
+// stakingContracts1.js
+
+// Assuming the previous parts like initializing TronWeb and checking TronLink are already in place...
+
+// Event listener for the stake button
+document.getElementById('stake-button-token1').addEventListener('click', async () => {
+    const amount = document.getElementById('stake-amount-token1').value;
+    if (amount > 0) {
+        await stakeToken(amount);
+    } else {
+        console.error('Please enter a valid amount to stake.');
+    }
+});
+
+// Event listener for the unstake button
+document.getElementById('unstake-button-token1').addEventListener('click', async () => {
+    const amount = document.getElementById('stake-amount-token1').value;
+    if (amount > 0) {
+        await unstakeToken(amount);
+    } else {
+        console.error('Please enter a valid amount to unstake.');
+    }
+});
+
+// Event listener for the claim rewards button
+document.getElementById('claim-rewards-button-token1').addEventListener('click', async () => {
+    await claimRewards();
+});
+
+// Function to stake tokens
+async function stakeToken(amount) {
+    try {
+        const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
+        const decimals = await tokenContract.methods.decimals().call();
+        const amountInDecimals = amount * Math.pow(10, decimals);
+
+        // Approve the staking contract to spend the tokens
+        await tokenContract.methods.approve(stakingContractAddress, amountInDecimals).send();
+
+        // Stake the tokens
+        await stakingContract.methods.stake(amountInDecimals).send();
+
+        console.log('Tokens staked successfully.');
+        await updateStakedAmount();
+        await updateClaimableRewards();
+    } catch (error) {
+        console.error('Error staking tokens:', error);
+    }
+}
+
+// Function to unstake tokens
+async function unstakeToken(amount) {
+    try {
+        const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
+        const decimals = await tokenContract.methods.decimals().call();
+        const amountInDecimals = amount * Math.pow(10, decimals);
+
+        // Unstake the tokens
+        await stakingContract.methods.withdraw(amountInDecimals).send();
+
+        console.log('Tokens unstaked successfully.');
+        await updateStakedAmount();
+        await updateClaimableRewards();
+    } catch (error) {
+        console.error('Error unstaking tokens:', error);
+    }
+}
+
+// Function to claim rewards
+async function claimRewards() {
+    try {
+        await stakingContract.methods.claimReward().send();
+
+        console.log('Rewards claimed successfully.');
+        await updateClaimableRewards();
+    } catch (error) {
+        console.error('Error claiming rewards:', error);
+    }
+}
+
+
 // Function to update the staked amount
 async function updateStakedAmount() {
     try {
