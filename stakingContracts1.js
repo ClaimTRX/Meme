@@ -737,8 +737,8 @@ async function initializeTronWeb() {
         // Initialize the staking contract
         stakingContract = await tronWeb.contract(stakingContractAbi, stakingContractAddress);
 
-        // Update the UI with staked amount, claimable rewards, and projected monthly earnings
-        await updateStakedAmount();
+        // Update the UI with staked details and claimable rewards
+        await updateStakedDetails();
         await updateClaimableRewards();
         await updateProjectedMonthlyEarnings();
     } catch (error) {
@@ -769,15 +769,17 @@ async function connectWallet() {
     }
 }
 
-// stakingContracts1.js
-
-// Assuming the previous parts like initializing TronWeb and checking TronLink are already in place...
-
 // Event listener for the stake button
 document.getElementById('stake-button-token1').addEventListener('click', async () => {
     const amount = document.getElementById('stake-amount-token1').value;
     if (amount > 0) {
         await stakeToken(amount);
+        // Update UI after 4 seconds
+        setTimeout(async () => {
+            await updateStakedDetails();
+            await updateClaimableRewards();
+            await updateProjectedMonthlyEarnings();
+        }, 4000);
     } else {
         console.error('Please enter a valid amount to stake.');
     }
@@ -788,6 +790,12 @@ document.getElementById('unstake-button-token1').addEventListener('click', async
     const amount = document.getElementById('stake-amount-token1').value;
     if (amount > 0) {
         await unstakeToken(amount);
+        // Update UI after 4 seconds
+        setTimeout(async () => {
+            await updateStakedDetails();
+            await updateClaimableRewards();
+            await updateProjectedMonthlyEarnings();
+        }, 4000);
     } else {
         console.error('Please enter a valid amount to unstake.');
     }
@@ -796,6 +804,12 @@ document.getElementById('unstake-button-token1').addEventListener('click', async
 // Event listener for the claim rewards button
 document.getElementById('claim-rewards-button-token1').addEventListener('click', async () => {
     await claimRewards();
+    // Update UI after 4 seconds
+    setTimeout(async () => {
+        await updateStakedDetails();
+        await updateClaimableRewards();
+        await updateProjectedMonthlyEarnings();
+    }, 4000);
 });
 
 // Function to stake tokens
@@ -812,8 +826,6 @@ async function stakeToken(amount) {
         await stakingContract.methods.stake(amountInDecimals).send();
 
         console.log('Tokens staked successfully.');
-        await updateStakedAmount();
-        await updateClaimableRewards();
     } catch (error) {
         console.error('Error staking tokens:', error);
     }
@@ -830,8 +842,6 @@ async function unstakeToken(amount) {
         await stakingContract.methods.withdraw(amountInDecimals).send();
 
         console.log('Tokens unstaked successfully.');
-        await updateStakedAmount();
-        await updateClaimableRewards();
     } catch (error) {
         console.error('Error unstaking tokens:', error);
     }
@@ -843,23 +853,41 @@ async function claimRewards() {
         await stakingContract.methods.claimReward().send();
 
         console.log('Rewards claimed successfully.');
-        await updateClaimableRewards();
     } catch (error) {
         console.error('Error claiming rewards:', error);
     }
 }
 
-
-// Function to update the staked amount
-async function updateStakedAmount() {
+// Function to update staked details (total staked, user's staked amount, percentage)
+async function updateStakedDetails() {
     try {
-        const stakedAmountRaw = await stakingContract.methods.viewStakedAmount(userAddress).call();
+        // Fetch total staked tokens
+        const totalStakedRaw = await stakingContract.methods.viewTotalStaked().call();
         const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
         const decimals = await tokenContract.methods.decimals().call();
-        const stakedAmount = stakedAmountRaw / Math.pow(10, decimals);
-        document.getElementById('staked-amount-token1').innerText = formatWholeNumber(stakedAmount);
+        const totalStaked = totalStakedRaw / Math.pow(10, decimals);
+
+        // Fetch wallet's staked tokens
+        const walletStakedRaw = await stakingContract.methods.viewStakedAmount(userAddress).call();
+        const walletStaked = walletStakedRaw / Math.pow(10, decimals);
+
+        // Calculate the wallet's percentage of staked tokens
+        let stakedPercentage = 0;
+        if (totalStaked > 0) {
+            stakedPercentage = (walletStaked / totalStaked) * 100;
+        }
+
+        // Display the total staked tokens
+        document.getElementById('total-staked-token1').innerText = formatNumber(totalStaked) + ' $SUNRAT';
+
+        // Display the wallet's staked tokens
+        document.getElementById('staked-amount-token1').innerText = formatNumber(walletStaked) + ' $SUNRAT';
+
+        // Display the wallet's staked percentage
+        document.getElementById('staked-percentage-token1').innerText = stakedPercentage.toFixed(2) + ' %';
+
     } catch (error) {
-        console.error('Error fetching staked amount:', error);
+        console.error('Error updating staked details:', error);
     }
 }
 
@@ -906,3 +934,4 @@ function formatWholeNumber(num) {
 document.getElementById('connect-button').addEventListener('click', async () => {
     await connectWallet();
 });
+
