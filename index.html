@@ -280,6 +280,42 @@
             </div>
         </div>
 
+        <!-- Card for $BBT -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <div class="card-text-section">
+                    <h5 class="card-title">Stake your $SUNRAT for TRX rewards</h5>
+                    <input type="number" id="stake-amount-token2" class="form-control" placeholder="Enter amount to stake">
+                    <button id="stake-button-token2" class="btn btn-success">Stake</button><br>
+                    <button id="unstake-button-token2" class="btn btn-danger">Unstake</button>
+
+                    <h5 class="card-title mt-3">Total Staked $SUNRAT</h5>
+                    <p class="card-text" id="total-staked-token2">Loading...</p>
+
+                    <h5 class="card-title mt-3">Your Staked $SUNRAT</h5>
+                    <p class="card-text" id="staked-amount-token2">Loading...</p>
+
+                    <h5 class="card-title mt-3">Your Staked Percentage</h5>
+                    <p class="card-text" id="staked-percentage-token2">Loading...</p>
+
+                    <h5 class="card-title mt-3">Claimable TRX Rewards</h5>
+                    <p class="card-text" id="claimable-rewards-token2">Loading...</p>
+                    <button id="claim-rewards-button-token2" class="btn btn-success">Claim Rewards</button>
+
+                    <h5 class="card-title mt-3">Expected Daily, Monthly, Yearly Rewards</h5>
+                    <p class="card-text" id="expected-rewards-token2">Loading...</p>
+                </div>
+
+                <div class="card-image-container">
+                    <img src="https://raw.githubusercontent.com/ClaimTRX/Test/main/66c5c51294256_download.jpg" class="card-image" alt="Token Image">
+                    <div class="telegram-link">
+                        <a href="https://t.me/SunRatMain" target="_blank">
+                            <i class="fab fa-telegram-plane"></i> Join our Telegram
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
        
     </div>
 
@@ -287,7 +323,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tronweb/dist/TronWeb.min.js"></script>
     <script src="stakingContracts1.js"></script>
-    
+    <script src="stakingContracts2.js"></script>
     <script>
         // This script ensures that the wallet connects and initializes the TRON network connection
         document.addEventListener('DOMContentLoaded', async () => {
