@@ -1,38 +1,22 @@
-document.addEventListener("DOMContentLoaded", async function() {
-    // Force TronWeb to use a specific node
-    const fullNode = 'https://api.trongrid.io';
-    const solidityNode = 'https://api.trongrid.io';
-    const eventServer = 'https://api.trongrid.io';
-
-    // Set up TronWeb with specific nodes
-    window.tronWeb = new TronWeb(
-        fullNode,
-        solidityNode,
-        eventServer,
-        window.tronWeb.defaultPrivateKey // Use TronLink's private key
-    );
-
-    const userAddress = await connectWallet();
-    if (userAddress) {
-        initializeStaking2();
-    }
+document.addEventListener("DOMContentLoaded", function() {
+    initializeStaking2();
 });
 
 async function connectWallet() {
     try {
-        while (typeof window.tronWeb === 'undefined' || !window.tronWeb.defaultAddress.base58) {
-            console.log('Waiting for TronLink to be connected...');
-            await new Promise(resolve => setTimeout(resolve, 500)); // wait for 500ms and check again
+        if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
+            const userAddress = window.tronWeb.defaultAddress.base58;
+            console.log("Connected to wallet:", userAddress);
+            document.getElementById("connect-button").style.display = "none"; // Hide the connect button after successful connection
+            return userAddress; // Return the user's address for further use
+        } else {
+            console.error("TronLink not found or not connected.");
+            alert("Please install TronLink wallet and connect your wallet.");
+            return null;
         }
-
-        const userAddress = window.tronWeb.defaultAddress.base58;
-        console.log("Connected to wallet:", userAddress);
-        document.getElementById("connect-button").style.display = "none"; // Hide the connect button after successful connection
-        return userAddress; // Return the user's address for further use
     } catch (error) {
         console.error("Error connecting to wallet:", error);
         alert("Failed to connect wallet. Please try again.");
-        return null;
     }
 }
 
@@ -187,7 +171,6 @@ async function initializeStaking2() {
 
     await initializeTronWeb();
 }
-
 
 
 
