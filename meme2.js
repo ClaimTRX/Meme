@@ -156,11 +156,14 @@ async function initializeStaking2() {
         return parseFloat(num).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
     }
 
-    document.getElementById(elementIds.stakeButton).addEventListener("click", stakeTokens);
-    document.getElementById(elementIds.unstakeButton).addEventListener("click", unstakeTokens);
-    document.getElementById(elementIds.claimRewardsButton).addEventListener("click", claimRewards);
+    // Attach event listeners after DOM content is fully loaded
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById(elementIds.stakeButton).addEventListener("click", stakeTokens);
+        document.getElementById(elementIds.unstakeButton).addEventListener("click", unstakeTokens);
+        document.getElementById(elementIds.claimRewardsButton).addEventListener("click", claimRewards);
 
-    await initializeTronWeb();
+        initializeTronWeb(); // Initialize TronWeb after event listeners are attached
+    });
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
