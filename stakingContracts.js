@@ -494,12 +494,7 @@ async function initializeStaking(
         return;
       }
 
-      // Initialize TronWeb with your API key
-      tronWeb = new TronWeb({
-        fullHost: 'https://api.trongrid.io',
-        headers: { "TRON-PRO-API-KEY": "1b226541-bba1-48cf-b6f7-d6cd75be7b7e" },
-      });
-
+      tronWeb = window.tronWeb;
       userAddress = tronWeb.defaultAddress.base58;
 
       console.log("TronWeb initialized:", tronWeb);
@@ -539,7 +534,6 @@ async function initializeStaking(
       console.error("TronLink is not installed.");
     }
   }
-
 
   // Function to stake tokens
   async function stakeTokens() {
@@ -693,6 +687,9 @@ async function initializeStaking(
     await connectWallet();
   });
 }
+
+
+
 
 
 
