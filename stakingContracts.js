@@ -538,29 +538,26 @@ async function initializeStaking(
     }
   }
 
-  async function stakeToken(amount) {
-    try {
-      const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
-      
-      // Fetch the number of decimals for the token
-      const decimals = await tokenContract.methods.decimals().call();
-      
-      // Convert the amount to the smallest unit using TronWeb's BigNumber support
-      const amountInDecimals = tronWeb.toBigNumber(amount).times(tronWeb.toBigNumber(10).pow(decimals));
+  async function stakeTokens(token, amount) {
+            try {
+                const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContracts[token]);
+                const decimals = await tokenContract.methods.decimals().call();
 
-      console.log("Staking amount (in decimals):", amountInDecimals.toString());
+                // Convert the amount to the smallest unit based on token decimals
+                const amountToStake = BigInt(amount) * BigInt(Math.pow(10, decimals));
 
-      // Approve the staking contract to spend the tokens
-      await tokenContract.methods.approve(stakingContractAddress, amountInDecimals.toString()).send();
+                // Step 1: Approve the staking contract to spend the tokens
+                await tokenContract.methods.approve(stakingContractAddresses[token], maxUint256).send();
 
-      // Stake the tokens
-      await stakingContract.methods.stake(amountInDecimals.toString()).send();
+                // Step 2: Stake the tokens
+                await stakingContracts[token].methods.stake(amountToStake.toString()).send();
 
-      console.log("Tokens staked successfully.");
-    } catch (error) {
-      console.error("Error staking tokens:", error);
-    }
-  }
+                // Step 3: Update the UI to reflect the new staked amount
+                await updateStakedAmount(token);
+            } catch (error) {
+                console.error(`Error staking tokens for ${token}:`, error);
+            }
+        }
 
   async function unstakeToken(amount) {
     try {
