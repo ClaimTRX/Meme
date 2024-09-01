@@ -481,7 +481,8 @@ const stakingContractAbi = [
     }
 ];
 
-// Initialize the staking functionality
+// stakingContracts.js
+
 async function initializeStaking(
   tokenContractAddress,
   stakingContractAddress,
@@ -539,35 +540,38 @@ async function initializeStaking(
 
   async function stakeToken(amount) {
     try {
-        const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
-        
-        // Fetch the number of decimals for the token
-        const decimals = await tokenContract.methods.decimals().call();
-        
-        // Convert the amount to the smallest unit using TronWeb's BigNumber support
-        const amountInDecimals = tronWeb.toBigNumber(amount).times(tronWeb.toBigNumber(10).pow(decimals));
+      const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
+      
+      // Fetch the number of decimals for the token
+      const decimals = await tokenContract.methods.decimals().call();
+      
+      // Convert the amount to the smallest unit using TronWeb's BigNumber support
+      const amountInDecimals = tronWeb.toBigNumber(amount).times(tronWeb.toBigNumber(10).pow(decimals));
 
-        // Approve the staking contract to spend the tokens
-        await tokenContract.methods.approve(stakingContractAddress, amountInDecimals.toString()).send();
+      console.log("Staking amount (in decimals):", amountInDecimals.toString());
 
-        // Stake the tokens
-        await stakingContract.methods.stake(amountInDecimals.toString()).send();
+      // Approve the staking contract to spend the tokens
+      await tokenContract.methods.approve(stakingContractAddress, amountInDecimals.toString()).send();
 
-        console.log("Tokens staked successfully.");
+      // Stake the tokens
+      await stakingContract.methods.stake(amountInDecimals.toString()).send();
+
+      console.log("Tokens staked successfully.");
     } catch (error) {
-        console.error("Error staking tokens:", error);
+      console.error("Error staking tokens:", error);
     }
-}
-
+  }
 
   async function unstakeToken(amount) {
     try {
       const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
       const decimals = await tokenContract.methods.decimals().call();
-      const amountInDecimals = amount * Math.pow(10, decimals);
+      const amountInDecimals = tronWeb.toBigNumber(amount).times(tronWeb.toBigNumber(10).pow(decimals));
+
+      console.log("Unstaking amount (in decimals):", amountInDecimals.toString());
 
       // Unstake the tokens
-      await stakingContract.methods.withdraw(amountInDecimals).send();
+      await stakingContract.methods.withdraw(amountInDecimals.toString()).send();
 
       console.log("Tokens unstaked successfully.");
     } catch (error) {
@@ -587,29 +591,28 @@ async function initializeStaking(
 
   async function updateStakedDetails() {
     try {
-      // Fetch total staked tokens
+      // Fetch total staked tokens in the smallest unit
       const totalStakedRaw = await stakingContract.methods.viewTotalStaked().call();
       const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
+      
+      // Fetch the number of decimals for the token
       const decimals = await tokenContract.methods.decimals().call();
-      const totalStaked = totalStakedRaw / Math.pow(10, decimals);
+      
+      // Convert the total staked to a user-friendly format
+      const totalStaked = totalStakedRaw.div(tronWeb.toBigNumber(10).pow(decimals));
 
       // Fetch wallet's staked tokens
       const walletStakedRaw = await stakingContract.methods.viewStakedAmount(userAddress).call();
-      const walletStaked = walletStakedRaw / Math.pow(10, decimals);
+      const walletStaked = walletStakedRaw.div(tronWeb.toBigNumber(10).pow(decimals));
 
-      // Calculate the wallet's percentage of staked tokens
+      // Calculate and display the wallet's staked percentage
       let stakedPercentage = 0;
-      if (totalStaked > 0) {
-        stakedPercentage = (walletStaked / totalStaked) * 100;
+      if (totalStaked.gt(0)) {
+        stakedPercentage = walletStaked.div(totalStaked).times(100);
       }
 
-      // Display the total staked tokens
       document.getElementById(elementIds.totalStaked).innerText = formatNumber(totalStaked);
-
-      // Display the wallet's staked tokens
       document.getElementById(elementIds.stakedAmount).innerText = formatNumber(walletStaked);
-
-      // Display the wallet's staked percentage
       document.getElementById(elementIds.stakedPercentage).innerText = stakedPercentage.toFixed(2) + " %";
     } catch (error) {
       console.error("Error updating staked details:", error);
@@ -621,7 +624,7 @@ async function initializeStaking(
       const claimableRewardsRaw = await stakingContract.methods.viewPendingReward(userAddress).call();
       const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
       const decimals = await tokenContract.methods.decimals().call();
-      const claimableRewards = claimableRewardsRaw / Math.pow(10, decimals);
+      const claimableRewards = claimableRewardsRaw.div(tronWeb.toBigNumber(10).pow(decimals));
       document.getElementById(elementIds.claimableRewards).innerText = formatNumber(claimableRewards);
     } catch (error) {
       console.error("Error fetching claimable rewards:", error);
@@ -633,10 +636,11 @@ async function initializeStaking(
       const projectedRewards = await stakingContract.methods.viewExpectedRewards(userAddress).call();
       const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
       const decimals = await tokenContract.methods.decimals().call();
+
       document.getElementById(elementIds.expectedRewards).innerText = `
-        Daily: ${formatNumber(projectedRewards.daily / Math.pow(10, decimals))},
-        Monthly: ${formatNumber(projectedRewards.monthly / Math.pow(10, decimals))},
-        Yearly: ${formatNumber(projectedRewards.yearly / Math.pow(10, decimals))}
+        Daily: ${formatNumber(projectedRewards.daily.div(tronWeb.toBigNumber(10).pow(decimals)))},
+        Monthly: ${formatNumber(projectedRewards.monthly.div(tronWeb.toBigNumber(10).pow(decimals)))},
+        Yearly: ${formatNumber(projectedRewards.yearly.div(tronWeb.toBigNumber(10).pow(decimals)))}
       `;
     } catch (error) {
       console.error("Error fetching projected monthly earnings:", error);
@@ -691,7 +695,12 @@ async function initializeStaking(
 
   // Initialize TronWeb when the document is ready
   document.addEventListener("DOMContentLoaded", async () => {
+    tronWeb = new TronWeb({
+      fullHost: 'https://api.trongrid.io',
+      headers: { "TRON-PRO-API-KEY": "1b226541-bba1-48cf-b6f7-d6cd75be7b7e" },
+    });
     await connectWallet();
   });
 }
+
 
