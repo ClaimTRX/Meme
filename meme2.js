@@ -1,11 +1,25 @@
-document.addEventListener("DOMContentLoaded", function() {
-    // Your existing initializeStaking2 function here
-    initializeStaking2();
+document.addEventListener("DOMContentLoaded", async function() {
+    // Force TronWeb to use a specific node
+    const fullNode = 'https://api.trongrid.io';
+    const solidityNode = 'https://api.trongrid.io';
+    const eventServer = 'https://api.trongrid.io';
+
+    // Set up TronWeb with specific nodes
+    window.tronWeb = new TronWeb(
+        fullNode,
+        solidityNode,
+        eventServer,
+        window.tronWeb.defaultPrivateKey // Use TronLink's private key
+    );
+
+    const userAddress = await connectWallet();
+    if (userAddress) {
+        initializeStaking2();
+    }
 });
 
 async function connectWallet() {
     try {
-        // Wait for TronWeb to be injected (by TronLink)
         while (typeof window.tronWeb === 'undefined' || !window.tronWeb.defaultAddress.base58) {
             console.log('Waiting for TronLink to be connected...');
             await new Promise(resolve => setTimeout(resolve, 500)); // wait for 500ms and check again
@@ -21,7 +35,6 @@ async function connectWallet() {
         return null;
     }
 }
-
 
 async function initializeStaking2() {
     const tokenContractAddress = 'TGyZUWrL97mmmYJwrC7ZCLVrhbzvHmmWPL';
@@ -41,7 +54,7 @@ async function initializeStaking2() {
         yearlyEarnings: 'yearly-earnings-token2'
     };
 
-    let tronWeb, userAddress, stakingContract;
+    let tronWeb, stakingContract;
 
     async function initializeTronWeb() {
         if (!window.tronWeb || !window.tronWeb.defaultAddress.base58) {
@@ -50,7 +63,6 @@ async function initializeStaking2() {
         }
 
         tronWeb = window.tronWeb;
-        userAddress = tronWeb.defaultAddress.base58;
 
         stakingContract = await tronWeb.contract(stakingContractAbi, stakingContractAddress);
 
@@ -59,8 +71,20 @@ async function initializeStaking2() {
         await updateProjectedEarnings();
     }
 
-    
-
+    async function safeContractCall(callFunction, retries = 3, delay = 1000) {
+        for (let i = 0; i < retries; i++) {
+            try {
+                return await callFunction();
+            } catch (error) {
+                console.error(`Error on attempt ${i + 1}:`, error);
+                if (i < retries - 1) {
+                    await new Promise(resolve => setTimeout(resolve, delay)); // wait before retrying
+                } else {
+                    throw error; // rethrow the last error if out of retries
+                }
+            }
+        }
+    }
 
     async function stakeTokens() {
         const amount = document.getElementById(elementIds.stakeAmount).value;
@@ -70,8 +94,8 @@ async function initializeStaking2() {
 
             const amountToStake = BigInt(amount) * BigInt(10 ** decimals);
 
-            await tokenContract.methods.approve(stakingContractAddress, amountToStake.toString()).send();
-            await stakingContract.methods.stake(amountToStake.toString()).send();
+            await safeContractCall(() => tokenContract.methods.approve(stakingContractAddress, amountToStake.toString()).send());
+            await safeContractCall(() => stakingContract.methods.stake(amountToStake.toString()).send());
 
             await updateStakedDetails();
             await updateClaimableRewards();
@@ -89,7 +113,7 @@ async function initializeStaking2() {
 
             const amountToUnstake = BigInt(amount) * BigInt(10 ** decimals);
 
-            await stakingContract.methods.withdraw(amountToUnstake.toString()).send();
+            await safeContractCall(() => stakingContract.methods.withdraw(amountToUnstake.toString()).send());
 
             await updateStakedDetails();
             await updateClaimableRewards();
@@ -100,19 +124,19 @@ async function initializeStaking2() {
     }
 
     async function claimRewards() {
-        await stakingContract.methods.claimReward().send();
+        await safeContractCall(() => stakingContract.methods.claimReward().send());
         await updateStakedDetails();
         await updateClaimableRewards();
         await updateProjectedEarnings();
     }
 
     async function updateStakedDetails() {
-        const totalStakedRaw = await stakingContract.methods.viewTotalStaked().call();
+        const totalStakedRaw = await safeContractCall(() => stakingContract.methods.viewTotalStaked().call());
         const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
         const decimals = await tokenContract.methods.decimals().call();
         const totalStaked = totalStakedRaw / Math.pow(10, decimals);
 
-        const walletStakedRaw = await stakingContract.methods.viewStakedAmount(userAddress).call();
+        const walletStakedRaw = await safeContractCall(() => stakingContract.methods.viewStakedAmount(window.tronWeb.defaultAddress.base58).call());
         const walletStaked = walletStakedRaw / Math.pow(10, decimals);
 
         let stakedPercentage = 0;
@@ -126,7 +150,7 @@ async function initializeStaking2() {
     }
 
     async function updateClaimableRewards() {
-        const claimableRewardsRaw = await stakingContract.methods.viewPendingReward(userAddress).call();
+        const claimableRewardsRaw = await safeContractCall(() => stakingContract.methods.viewPendingReward(window.tronWeb.defaultAddress.base58).call());
         const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
         const decimals = await tokenContract.methods.decimals().call();
         const claimableRewards = claimableRewardsRaw / Math.pow(10, decimals);
@@ -134,10 +158,7 @@ async function initializeStaking2() {
     }
 
     async function updateProjectedEarnings() {
-    try {
-        const projectedRewards = await stakingContract.methods.viewExpectedRewards(userAddress).call();
-        console.log('Projected Rewards:', projectedRewards); // Log the rewards to debug
-
+        const projectedRewards = await safeContractCall(() => stakingContract.methods.viewExpectedRewards(window.tronWeb.defaultAddress.base58).call());
         const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
         const decimals = await tokenContract.methods.decimals().call();
 
@@ -148,12 +169,7 @@ async function initializeStaking2() {
         document.getElementById(elementIds.dailyEarnings).innerText = `Daily: ${formatNumber(dailyEarnings)} TRX`;
         document.getElementById(elementIds.monthlyEarnings).innerText = `Monthly: ${formatNumber(monthlyEarnings)} TRX`;
         document.getElementById(elementIds.yearlyEarnings).innerText = `Yearly: ${formatNumber(yearlyEarnings)} TRX`;
-    } catch (error) {
-        console.error("Error fetching projected earnings:", error);
-        alert("Failed to fetch projected earnings. Please check your connection or try again later.");
     }
-}
-
 
     function formatNumber(num) {
         return parseFloat(num).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
@@ -169,10 +185,8 @@ async function initializeStaking2() {
         document.getElementById(elementIds.claimRewardsButton).addEventListener("click", claimRewards);
     }
 
-    document.addEventListener("DOMContentLoaded", initializeTronWeb);
+    await initializeTronWeb();
 }
-
-initializeStaking2();
 
 
 
