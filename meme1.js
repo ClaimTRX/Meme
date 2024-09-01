@@ -57,78 +57,56 @@ async function initializeStaking1() {
         tronWeb = window.tronWeb;
         userAddress = tronWeb.defaultAddress.base58;
 
+        console.log('Initializing TronWeb and Contracts...');
         stakingContract = await tronWeb.contract(stakingContractAbi, stakingContractAddress);
+        console.log('Staking Contract Initialized:', stakingContract);
 
-        await updateStakedDetails();
-        await updateClaimableRewards();
-    }
-
-    async function stakeTokens() {
-        const amount = document.getElementById(elementIds.stakeAmount).value;
-        if (amount > 0) {
-            const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
-            const decimals = await tokenContract.methods.decimals().call();
-
-            const amountToStake = BigInt(amount) * BigInt(10 ** decimals);
-
-            await tokenContract.methods.approve(stakingContractAddress, amountToStake.toString()).send();
-            await stakingContract.methods.stake(amountToStake.toString()).send();
-
-            await updateStakedDetails();
-            await updateClaimableRewards();
-        } else {
-            console.error("Please enter a valid amount to stake.");
-        }
-    }
-
-    async function unstakeTokens() {
-        const amount = document.getElementById(elementIds.stakeAmount).value;
-        if (amount > 0) {
-            const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
-            const decimals = await tokenContract.methods.decimals().call();
-
-            const amountToUnstake = BigInt(amount) * BigInt(10 ** decimals);
-
-            await stakingContract.methods.withdraw(amountToUnstake.toString()).send();
-
-            await updateStakedDetails();
-            await updateClaimableRewards();
-        } else {
-            console.error("Please enter a valid amount to unstake.");
-        }
-    }
-
-    async function claimRewards() {
-        await stakingContract.methods.claimReward().send();
         await updateStakedDetails();
         await updateClaimableRewards();
     }
 
     async function updateStakedDetails() {
-        const totalStakedRaw = await stakingContract.methods.viewTotalStaked().call();
-        const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
-        const decimals = await tokenContract.methods.decimals().call();
-        const totalStaked = totalStakedRaw / Math.pow(10, decimals);
+        try {
+            console.log('Fetching total staked...');
+            const totalStakedRaw = await stakingContract.methods.viewTotalStaked().call();
+            const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
+            const decimals = await tokenContract.methods.decimals().call();
+            const totalStaked = totalStakedRaw / Math.pow(10, decimals);
 
-        const walletStakedRaw = await stakingContract.methods.viewStakedAmount(userAddress).call();
-        const walletStaked = walletStakedRaw / Math.pow(10, decimals);
+            console.log('Total Staked:', totalStaked);
 
-        let stakedPercentage = 0;
-        if (totalStaked > 0) {
-            stakedPercentage = (walletStaked / totalStaked) * 100;
+            const walletStakedRaw = await stakingContract.methods.viewStakedAmount(userAddress).call();
+            const walletStaked = walletStakedRaw / Math.pow(10, decimals);
+
+            console.log('Wallet Staked:', walletStaked);
+
+            let stakedPercentage = 0;
+            if (totalStaked > 0) {
+                stakedPercentage = (walletStaked / totalStaked) * 100;
+            }
+
+            document.getElementById(elementIds.totalStaked).innerText = formatNumber(totalStaked);
+            document.getElementById(elementIds.stakedAmount).innerText = formatNumber(walletStaked);
+            document.getElementById(elementIds.stakedPercentage).innerText = stakedPercentage.toFixed(2) + " %";
+        } catch (error) {
+            console.error('Error updating staked details:', error);
         }
-
-        document.getElementById(elementIds.totalStaked).innerText = formatNumber(totalStaked);
-        document.getElementById(elementIds.stakedAmount).innerText = formatNumber(walletStaked);
-        document.getElementById(elementIds.stakedPercentage).innerText = stakedPercentage.toFixed(2) + " %";
     }
 
     async function updateClaimableRewards() {
-        const claimableRewardsRaw = await stakingContract.methods.viewPendingReward(userAddress).call();
-        const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
-        const decimals = await tokenContract.methods.decimals().call();
-        const claimableRewards = claimableRewardsRaw / Math.pow(10, decimals);
-        document.getElementById(elementIds.claimableRewards).innerText = formatNumber(claimableRewards);
+        try {
+            console.log('Fetching claimable rewards...');
+            const claimableRewardsRaw = await stakingContract.methods.viewPendingReward(userAddress).call();
+            const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
+            const decimals = await tokenContract.methods.decimals().call();
+            const claimableRewards = claimableRewardsRaw / Math.pow(10, decimals);
+
+            console.log('Claimable Rewards:', claimableRewards);
+
+            document.getElementById(elementIds.claimableRewards).innerText = formatNumber(claimableRewards);
+        } catch (error) {
+            console.error('Error fetching claimable rewards:', error);
+        }
     }
 
     function formatNumber(num) {
@@ -151,6 +129,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         initializeStaking1(); // Only initialize staking after wallet is connected
     }
 });
+
 
 
 
