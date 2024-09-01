@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function() {
-    // Your existing initializeStaking1 function here
     initializeStaking1();
 });
 
@@ -21,7 +20,6 @@ async function connectWallet() {
     }
 }
 
-// Initialize the staking functionality
 async function initializeStaking1() {
     const tokenContractAddress = 'TTwpF9nE4WpRbBXiEyYkXSfRXaxZWrFmoh';
     const stakingContractAddress = 'TDRQaWbdkyxfjYRvhJn85r3eWCfCM7vBBr';
@@ -126,14 +124,21 @@ async function initializeStaking1() {
         return parseFloat(num).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
     }
 
-    document.getElementById(elementIds.stakeButton).addEventListener("click", stakeTokens);
-    document.getElementById(elementIds.unstakeButton).addEventListener("click", unstakeTokens);
-    document.getElementById(elementIds.claimRewardsButton).addEventListener("click", claimRewards);
+    if (document.getElementById(elementIds.stakeButton)) {
+        document.getElementById(elementIds.stakeButton).addEventListener("click", stakeTokens);
+    }
+    if (document.getElementById(elementIds.unstakeButton)) {
+        document.getElementById(elementIds.unstakeButton).addEventListener("click", unstakeTokens);
+    }
+    if (document.getElementById(elementIds.claimRewardsButton)) {
+        document.getElementById(elementIds.claimRewardsButton).addEventListener("click", claimRewards);
+    }
 
     document.addEventListener("DOMContentLoaded", initializeTronWeb);
 }
 
 initializeStaking1();
+
 
 
 
