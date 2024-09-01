@@ -1,5 +1,3 @@
-// meme2.js
-
 document.addEventListener("DOMContentLoaded", function() {
     // Your existing initializeStaking2 function here
     initializeStaking2();
@@ -148,14 +146,21 @@ async function initializeStaking2() {
         return parseFloat(num).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
     }
 
-    document.getElementById(elementIds.stakeButton).addEventListener("click", stakeTokens);
-    document.getElementById(elementIds.unstakeButton).addEventListener("click", unstakeTokens);
-    document.getElementById(elementIds.claimRewardsButton).addEventListener("click", claimRewards);
+    if (document.getElementById(elementIds.stakeButton)) {
+        document.getElementById(elementIds.stakeButton).addEventListener("click", stakeTokens);
+    }
+    if (document.getElementById(elementIds.unstakeButton)) {
+        document.getElementById(elementIds.unstakeButton).addEventListener("click", unstakeTokens);
+    }
+    if (document.getElementById(elementIds.claimRewardsButton)) {
+        document.getElementById(elementIds.claimRewardsButton).addEventListener("click", claimRewards);
+    }
 
     document.addEventListener("DOMContentLoaded", initializeTronWeb);
 }
 
 initializeStaking2();
+
 
 
 
