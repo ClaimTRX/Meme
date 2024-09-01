@@ -302,8 +302,11 @@
                     <p class="card-text" id="claimable-rewards-token2">Loading...</p>
                     <button id="claim-rewards-button-token2" class="btn btn-success">Claim Rewards</button>
 
-                    <h5 class="card-title mt-3">Projected Monthly Earnings</h5>
-                    <p class="card-text" id="monthly-earnings-token1">Loading...</p>
+                    <h5 class="card-title mt-3">Projected Earnings</h5>
+                    <p class="card-text" id="daily-earnings-token2">Daily: Loading...</p>
+                    <p class="card-text" id="monthly-earnings-token2">Monthly: Loading...</p>
+                    <p class="card-text" id="yearly-earnings-token2">Yearly: Loading...</p>
+
 
 
                 
@@ -344,23 +347,23 @@
             }
         );
 
-        // Initialize the second staking contract
-        initializeStaking(
-            'TGyZUWrL97mmmYJwrC7ZCLVrhbzvHmmWPL', // tokenContractAddress
-            'TXAXaguy6urxDVcQg5ehudtMqHZPhFH6yZ', // stakingContractAddress
-            {
-                stakeButton: 'stake-button-token2',
-                unstakeButton: 'unstake-button-token2',
-                claimRewardsButton: 'claim-rewards-button-token2',
-                stakeAmount: 'stake-amount-token2',
-                totalStaked: 'total-staked-token2',
-                stakedAmount: 'staked-amount-token2',
-                stakedPercentage: 'staked-percentage-token2',
-                claimableRewards: 'claimable-rewards-token2',
-                monthlyEarnings: 'monthly-earnings-token2'
-                
-            }
-        );
+       initializeStaking(
+  'TGyZUWrL97mmmYJwrC7ZCLVrhbzvHmmWPL', // tokenContractAddress (token2)
+  'TXAXaguy6urxDVcQg5ehudtMqHZPhFH6yZ', // stakingContractAddress (token2)
+  {
+    stakeButton: 'stake-button-token2',
+    unstakeButton: 'unstake-button-token2',
+    claimRewardsButton: 'claim-rewards-button-token2',
+    stakeAmount: 'stake-amount-token2',
+    totalStaked: 'total-staked-token2',
+    stakedAmount: 'staked-amount-token2',
+    stakedPercentage: 'staked-percentage-token2',
+    claimableRewards: 'claimable-rewards-token2',
+    dailyEarnings: 'daily-earnings-token2',
+    monthlyEarnings: 'monthly-earnings-token2',
+    yearlyEarnings: 'yearly-earnings-token2'
+  }
+);
     </script>
 </body>
 
