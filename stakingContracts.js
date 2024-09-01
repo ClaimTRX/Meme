@@ -494,15 +494,7 @@ async function initializeStaking(
         return;
       }
 
-      // API Key for TronGrid
-      const apiKey = "1b226541-bba1-48cf-b6f7-d6cd75be7b7e"; // Replace with your API Key
-
-      // Initialize TronWeb with the API key for mainnet
-      tronWeb = new TronWeb({
-        fullHost: "https://api.trongrid.io",
-        headers: { "TRON-PRO-API-KEY": apiKey }
-      });
-
+      tronWeb = window.tronWeb;
       userAddress = tronWeb.defaultAddress.base58;
 
       console.log("TronWeb initialized:", tronWeb);
@@ -516,7 +508,7 @@ async function initializeStaking(
       // Update the UI with staked details and claimable rewards
       await updateStakedDetails();
       await updateClaimableRewards();
-      await updateProjectedEarnings();
+     await updateProjectedEarnings();
     } catch (error) {
       console.error("Error initializing TronWeb:", error);
     }
@@ -563,7 +555,7 @@ async function initializeStaking(
         // Update the UI to reflect the new staked amount
         await updateStakedDetails();
         await updateClaimableRewards();
-        await updateProjectedEarnings();
+       await updateProjectedEarnings();
       } catch (error) {
         console.error("Error staking tokens:", error);
       }
@@ -676,7 +668,11 @@ async function initializeStaking(
     } catch (error) {
         console.error("Error fetching projected earnings:", error);
     }
-  }
+}
+
+
+
+
 
   function formatNumber(num) {
     return parseFloat(num).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
@@ -704,6 +700,13 @@ async function initializeStaking(
     await connectWallet();
   });
 }
+
+
+
+
+
+
+
 
 
 
