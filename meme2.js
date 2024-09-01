@@ -5,21 +5,23 @@ document.addEventListener("DOMContentLoaded", function() {
 
 async function connectWallet() {
     try {
-        if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
-            const userAddress = window.tronWeb.defaultAddress.base58;
-            console.log("Connected to wallet:", userAddress);
-            document.getElementById("connect-button").style.display = "none"; // Hide the connect button after successful connection
-            return userAddress; // Return the user's address for further use
-        } else {
-            console.error("TronLink not found or not connected.");
-            alert("Please install TronLink wallet and connect your wallet.");
-            return null;
+        // Wait for TronWeb to be injected (by TronLink)
+        while (typeof window.tronWeb === 'undefined' || !window.tronWeb.defaultAddress.base58) {
+            console.log('Waiting for TronLink to be connected...');
+            await new Promise(resolve => setTimeout(resolve, 500)); // wait for 500ms and check again
         }
+
+        const userAddress = window.tronWeb.defaultAddress.base58;
+        console.log("Connected to wallet:", userAddress);
+        document.getElementById("connect-button").style.display = "none"; // Hide the connect button after successful connection
+        return userAddress; // Return the user's address for further use
     } catch (error) {
         console.error("Error connecting to wallet:", error);
         alert("Failed to connect wallet. Please try again.");
+        return null;
     }
 }
+
 
 async function initializeStaking2() {
     const tokenContractAddress = 'TGyZUWrL97mmmYJwrC7ZCLVrhbzvHmmWPL';
