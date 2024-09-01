@@ -555,7 +555,7 @@ async function initializeStaking(
         // Update the UI to reflect the new staked amount
         await updateStakedDetails();
         await updateClaimableRewards();
-       await updateProjectedEarnings();();
+       await updateProjectedEarnings();
       } catch (error) {
         console.error("Error staking tokens:", error);
       }
@@ -581,7 +581,7 @@ async function initializeStaking(
         // Update the UI to reflect the new staked amount
         await updateStakedDetails();
         await updateClaimableRewards();
-        await updateProjectedEarnings();();
+        await updateProjectedEarnings();
       } catch (error) {
         console.error("Error unstaking tokens:", error);
       }
@@ -596,7 +596,7 @@ async function initializeStaking(
       await stakingContract.methods.claimReward().send();
       await updateStakedDetails();
       await updateClaimableRewards();
-      await updateProjectedEarnings();();
+      await updateProjectedEarnings();
     } catch (error) {
       console.error("Error claiming rewards:", error);
     }
