@@ -649,7 +649,10 @@ async function initializeStaking(
     try {
         // Fetch the expected rewards from the token2 contract
         const projectedRewards = await stakingContract.methods.viewExpectedRewards(userAddress).call();
-        
+
+        // Log the raw values for debugging
+        console.log('Raw projected rewards:', projectedRewards);
+
         // Assuming the rewards are in the smallest unit, convert them
         const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
         const decimals = await tokenContract.methods.decimals().call();
@@ -666,6 +669,7 @@ async function initializeStaking(
         console.error("Error fetching projected earnings:", error);
     }
 }
+
 
 
 
