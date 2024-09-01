@@ -1,6 +1,6 @@
 // Define the necessary contract addresses
 const tokenContractAddress = 'TWRJ4z9BnERjx9gKzBT9GkiCbPYmWCc4jb'; // Replace with your token contract address
-const stakingContractAddress = 'TXYpumccVffZtjgB8GdsKVqa3JawjAoMCA'; // Replace with your staking contract address
+const stakingContractAddress = 'TBTRjkF3PH9a6QfNuDYbZigJGzFJLt874y'; // Replace with your staking contract address
 
 // Contract ABIs
 const tokenContractAbi = [
