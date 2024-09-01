@@ -650,15 +650,18 @@ async function initializeStaking(
         const projectedRewards = await stakingContract.methods.viewExpectedRewards(userAddress).call();
         const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
         const decimals = await tokenContract.methods.decimals().call();
-        document.getElementById(elementIds.expectedRewards).innerText = `
-            Daily: ${formatNumber(projectedRewards.daily / Math.pow(10, decimals))},
-            Monthly: ${formatNumber(projectedRewards.monthly / Math.pow(10, decimals))},
-            Yearly: ${formatNumber(projectedRewards.yearly / Math.pow(10, decimals))}
-        `;
+
+        const dailyEarnings = projectedRewards.daily / Math.pow(10, decimals);
+        const monthlyEarnings = projectedRewards.monthly / Math.pow(10, decimals);
+        const yearlyEarnings = projectedRewards.yearly / Math.pow(10, decimals);
+
+        // Displaying just the monthly earnings for simplicity
+        document.getElementById(elementIds.monthlyEarnings).innerText = formatNumber(monthlyEarnings) + " TRX";
     } catch (error) {
         console.error("Error fetching projected monthly earnings:", error);
     }
 }
+
 
 
   function formatNumber(num) {
