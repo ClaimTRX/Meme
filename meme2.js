@@ -1,9 +1,6 @@
-document.addEventListener("DOMContentLoaded", function() {
-    initializeStaking2();
-});
-
 async function connectWallet() {
     try {
+        await waitForTronLink();
         if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
             const userAddress = window.tronWeb.defaultAddress.base58;
             console.log("Connected to wallet:", userAddress);
@@ -20,7 +17,25 @@ async function connectWallet() {
     }
 }
 
+async function waitForTronLink() {
+    return new Promise((resolve, reject) => {
+        let attempts = 0;
+        const maxAttempts = 10;
+        const interval = setInterval(() => {
+            if (window.tronWeb && window.tronWeb.ready) {
+                clearInterval(interval);
+                resolve();
+            } else if (attempts >= maxAttempts) {
+                clearInterval(interval);
+                reject(new Error("TronLink is not available or not connected."));
+            }
+            attempts++;
+        }, 500); // Check every 500ms
+    });
+}
+
 async function initializeStaking2() {
+    await waitForTronLink();
     const tokenContractAddress = 'TGyZUWrL97mmmYJwrC7ZCLVrhbzvHmmWPL';
     const stakingContractAddress = 'TXAXaguy6urxDVcQg5ehudtMqHZPhFH6yZ';
 
@@ -38,36 +53,18 @@ async function initializeStaking2() {
         yearlyEarnings: 'yearly-earnings-token2'
     };
 
-    let tronWeb, stakingContract;
+    let tronWeb, userAddress, stakingContract;
 
     async function initializeTronWeb() {
-        if (!window.tronWeb || !window.tronWeb.defaultAddress.base58) {
-            console.error("TronWeb not found or wallet not connected.");
-            return;
-        }
-
+        await waitForTronLink();
         tronWeb = window.tronWeb;
+        userAddress = tronWeb.defaultAddress.base58;
 
         stakingContract = await tronWeb.contract(stakingContractAbi, stakingContractAddress);
 
         await updateStakedDetails();
         await updateClaimableRewards();
         await updateProjectedEarnings();
-    }
-
-    async function safeContractCall(callFunction, retries = 3, delay = 1000) {
-        for (let i = 0; i < retries; i++) {
-            try {
-                return await callFunction();
-            } catch (error) {
-                console.error(`Error on attempt ${i + 1}:`, error);
-                if (i < retries - 1) {
-                    await new Promise(resolve => setTimeout(resolve, delay)); // wait before retrying
-                } else {
-                    throw error; // rethrow the last error if out of retries
-                }
-            }
-        }
     }
 
     async function stakeTokens() {
@@ -78,8 +75,8 @@ async function initializeStaking2() {
 
             const amountToStake = BigInt(amount) * BigInt(10 ** decimals);
 
-            await safeContractCall(() => tokenContract.methods.approve(stakingContractAddress, amountToStake.toString()).send());
-            await safeContractCall(() => stakingContract.methods.stake(amountToStake.toString()).send());
+            await tokenContract.methods.approve(stakingContractAddress, amountToStake.toString()).send();
+            await stakingContract.methods.stake(amountToStake.toString()).send();
 
             await updateStakedDetails();
             await updateClaimableRewards();
@@ -97,7 +94,7 @@ async function initializeStaking2() {
 
             const amountToUnstake = BigInt(amount) * BigInt(10 ** decimals);
 
-            await safeContractCall(() => stakingContract.methods.withdraw(amountToUnstake.toString()).send());
+            await stakingContract.methods.withdraw(amountToUnstake.toString()).send();
 
             await updateStakedDetails();
             await updateClaimableRewards();
@@ -108,19 +105,19 @@ async function initializeStaking2() {
     }
 
     async function claimRewards() {
-        await safeContractCall(() => stakingContract.methods.claimReward().send());
+        await stakingContract.methods.claimReward().send();
         await updateStakedDetails();
         await updateClaimableRewards();
         await updateProjectedEarnings();
     }
 
     async function updateStakedDetails() {
-        const totalStakedRaw = await safeContractCall(() => stakingContract.methods.viewTotalStaked().call());
+        const totalStakedRaw = await stakingContract.methods.viewTotalStaked().call();
         const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
         const decimals = await tokenContract.methods.decimals().call();
         const totalStaked = totalStakedRaw / Math.pow(10, decimals);
 
-        const walletStakedRaw = await safeContractCall(() => stakingContract.methods.viewStakedAmount(window.tronWeb.defaultAddress.base58).call());
+        const walletStakedRaw = await stakingContract.methods.viewStakedAmount(userAddress).call();
         const walletStaked = walletStakedRaw / Math.pow(10, decimals);
 
         let stakedPercentage = 0;
@@ -134,7 +131,7 @@ async function initializeStaking2() {
     }
 
     async function updateClaimableRewards() {
-        const claimableRewardsRaw = await safeContractCall(() => stakingContract.methods.viewPendingReward(window.tronWeb.defaultAddress.base58).call());
+        const claimableRewardsRaw = await stakingContract.methods.viewPendingReward(userAddress).call();
         const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
         const decimals = await tokenContract.methods.decimals().call();
         const claimableRewards = claimableRewardsRaw / Math.pow(10, decimals);
@@ -142,7 +139,7 @@ async function initializeStaking2() {
     }
 
     async function updateProjectedEarnings() {
-        const projectedRewards = await safeContractCall(() => stakingContract.methods.viewExpectedRewards(window.tronWeb.defaultAddress.base58).call());
+        const projectedRewards = await stakingContract.methods.viewExpectedRewards(userAddress).call();
         const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
         const decimals = await tokenContract.methods.decimals().call();
 
@@ -159,18 +156,19 @@ async function initializeStaking2() {
         return parseFloat(num).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
     }
 
-    if (document.getElementById(elementIds.stakeButton)) {
-        document.getElementById(elementIds.stakeButton).addEventListener("click", stakeTokens);
-    }
-    if (document.getElementById(elementIds.unstakeButton)) {
-        document.getElementById(elementIds.unstakeButton).addEventListener("click", unstakeTokens);
-    }
-    if (document.getElementById(elementIds.claimRewardsButton)) {
-        document.getElementById(elementIds.claimRewardsButton).addEventListener("click", claimRewards);
-    }
+    document.getElementById(elementIds.stakeButton).addEventListener("click", stakeTokens);
+    document.getElementById(elementIds.unstakeButton).addEventListener("click", unstakeTokens);
+    document.getElementById(elementIds.claimRewardsButton).addEventListener("click", claimRewards);
 
     await initializeTronWeb();
 }
+
+document.addEventListener("DOMContentLoaded", async function () {
+    const userAddress = await connectWallet();
+    if (userAddress) {
+        initializeStaking2(); // Only initialize staking after wallet is connected
+    }
+});
 
 
 
