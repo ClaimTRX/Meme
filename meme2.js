@@ -134,7 +134,10 @@ async function initializeStaking2() {
     }
 
     async function updateProjectedEarnings() {
+    try {
         const projectedRewards = await stakingContract.methods.viewExpectedRewards(userAddress).call();
+        console.log('Projected Rewards:', projectedRewards); // Log the rewards to debug
+
         const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
         const decimals = await tokenContract.methods.decimals().call();
 
@@ -145,7 +148,12 @@ async function initializeStaking2() {
         document.getElementById(elementIds.dailyEarnings).innerText = `Daily: ${formatNumber(dailyEarnings)} TRX`;
         document.getElementById(elementIds.monthlyEarnings).innerText = `Monthly: ${formatNumber(monthlyEarnings)} TRX`;
         document.getElementById(elementIds.yearlyEarnings).innerText = `Yearly: ${formatNumber(yearlyEarnings)} TRX`;
+    } catch (error) {
+        console.error("Error fetching projected earnings:", error);
+        alert("Failed to fetch projected earnings. Please check your connection or try again later.");
     }
+}
+
 
     function formatNumber(num) {
         return parseFloat(num).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
