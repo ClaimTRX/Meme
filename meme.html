@@ -80,6 +80,7 @@
             cursor: pointer;
             font-size: 14px;
             padding: 8px 16px;
+            display: none; /* Hide the button by default */
         }
 
         .main-content {
@@ -238,7 +239,7 @@
     </div>
 
     <div class="topbar">
-        <button id="connect-button" style="display:none;">Connect Wallet</button>
+        <button id="connect-button" onclick="connectWallet()">Connect Wallet</button>
     </div>
 
     <div class="main-content">
@@ -325,7 +326,17 @@
     <script src="stakingAbi.js"></script>
     <script src="meme1.js"></script>
     <script src="meme2.js"></script>
+    <script>
+        // Auto-connect wallet on page load
+        document.addEventListener("DOMContentLoaded", async function() {
+            const userAddress = await connectWallet();
+            if (userAddress) {
+                document.getElementById("connect-button").style.display = "none";
+            }
+        });
+    </script>
 </body>
 
 </html>
+
 
