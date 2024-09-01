@@ -1,9 +1,7 @@
-// meme1.js
 document.addEventListener("DOMContentLoaded", function() {
     // Your existing initializeStaking1 function here
     initializeStaking1();
 });
-
 
 async function connectWallet() {
     try {
@@ -37,7 +35,6 @@ async function initializeStaking1() {
         stakedAmount: 'staked-amount-token1',
         stakedPercentage: 'staked-percentage-token1',
         claimableRewards: 'claimable-rewards-token1'
-        
     };
 
     let tronWeb, userAddress, stakingContract;
@@ -55,7 +52,6 @@ async function initializeStaking1() {
 
         await updateStakedDetails();
         await updateClaimableRewards();
-        
     }
 
     async function stakeTokens() {
@@ -71,7 +67,6 @@ async function initializeStaking1() {
 
             await updateStakedDetails();
             await updateClaimableRewards();
-            
         } else {
             console.error("Please enter a valid amount to stake.");
         }
@@ -89,7 +84,6 @@ async function initializeStaking1() {
 
             await updateStakedDetails();
             await updateClaimableRewards();
-            
         } else {
             console.error("Please enter a valid amount to unstake.");
         }
@@ -99,7 +93,6 @@ async function initializeStaking1() {
         await stakingContract.methods.claimReward().send();
         await updateStakedDetails();
         await updateClaimableRewards();
-        
     }
 
     async function updateStakedDetails() {
@@ -129,7 +122,6 @@ async function initializeStaking1() {
         document.getElementById(elementIds.claimableRewards).innerText = formatNumber(claimableRewards);
     }
 
-    
     function formatNumber(num) {
         return parseFloat(num).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
     }
@@ -142,6 +134,7 @@ async function initializeStaking1() {
 }
 
 initializeStaking1();
+
 
 
 
