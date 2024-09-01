@@ -1,9 +1,27 @@
 // meme2.js
+
 document.addEventListener("DOMContentLoaded", function() {
     // Your existing initializeStaking2 function here
     initializeStaking2();
 });
 
+async function connectWallet() {
+    try {
+        if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
+            const userAddress = window.tronWeb.defaultAddress.base58;
+            console.log("Connected to wallet:", userAddress);
+            document.getElementById("connect-button").style.display = "none"; // Hide the connect button after successful connection
+            return userAddress; // Return the user's address for further use
+        } else {
+            console.error("TronLink not found or not connected.");
+            alert("Please install TronLink wallet and connect your wallet.");
+            return null;
+        }
+    } catch (error) {
+        console.error("Error connecting to wallet:", error);
+        alert("Failed to connect wallet. Please try again.");
+    }
+}
 
 async function initializeStaking2() {
     const tokenContractAddress = 'TGyZUWrL97mmmYJwrC7ZCLVrhbzvHmmWPL';
@@ -22,24 +40,6 @@ async function initializeStaking2() {
         monthlyEarnings: 'monthly-earnings-token2',
         yearlyEarnings: 'yearly-earnings-token2'
     };
-
-    async function connectWallet() {
-    try {
-        if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
-            const userAddress = window.tronWeb.defaultAddress.base58;
-            console.log("Connected to wallet:", userAddress);
-            document.getElementById("connect-button").style.display = "none"; // Hide the connect button after successful connection
-            return userAddress; // Return the user's address for further use
-        } else {
-            console.error("TronLink not found or not connected.");
-            alert("Please install TronLink wallet and connect your wallet.");
-            return null;
-        }
-    } catch (error) {
-        console.error("Error connecting to wallet:", error);
-        alert("Failed to connect wallet. Please try again.");
-    }
-}
 
     let tronWeb, userAddress, stakingContract;
 
