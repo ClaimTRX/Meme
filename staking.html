@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meme Staking</title>
+    <title>Staking</title>
     <link rel="icon" href="https://raw.githubusercontent.com/ClaimTRX/Test/main/favicon-32x32.png" type="image/png">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
@@ -221,8 +221,7 @@
 <body>
     <div class="sidebar">
         <h2>CFT</h2>
-        <a href="index.html">CFT Token</a>
-        <a href="usdt.html">USDT Rewards</a>
+        <a href="Staking.html">CFT Staking</a>
         <a href="treasury.html">Treasury</a>
         <a href="Swap.html">Swap</a>
         <a href="meme.html">Meme Staking</a>
@@ -241,32 +240,30 @@
     </div>
 
     <div class="main-content">
-        <h1>Meme Staking</h1>
+        <h1>CFT Staking</h1>
 
-        <!-- Card for $SUNRAT -->
+        <!-- Card for $CFT -->
 <div class="card mt-4">
     <div class="card-body">
         <div class="card-text-section">
-            <h5 class="card-title">Stake your $SUNRAT for TRX rewards</h5>
+            <h5 class="card-title">Stake your $CFT for TRX rewards</h5>
             <input type="number" id="stake-amount-token1" class="form-control" placeholder="Enter amount to stake">
             <button id="stake-button-token1" class="btn btn-success">Stake</button><br>
             <button id="unstake-button-token1" class="btn btn-danger">Unstake</button>
 
-            <h5 class="card-title mt-3">Total Staked $SUNRAT</h5>
+            <h5 class="card-title mt-3">Total Staked $CFT</h5>
             <p class="card-text" id="total-staked-token1">Loading...</p>
 
-            <h5 class="card-title mt-3">Your Staked $SUNRAT</h5>
+            <h5 class="card-title mt-3">Your Staked $CFT</h5>
             <p class="card-text" id="staked-amount-token1">Loading...</p>
 
-            <h5 class="card-title mt-3">Your Staked Percentage</h5>
-            <p class="card-text" id="staked-percentage-token1">Loading...</p>
+            <h5 class="card-title mt-3">Current APR</h5>
+          <p class="card-text" id="current-apr">Loading...</p>
 
             <h5 class="card-title mt-3">Claimable TRX Rewards</h5>
             <p class="card-text" id="claimable-rewards-token1">Loading...</p>
             <button id="claim-rewards-button-token1" class="btn btn-success">Claim Rewards</button>
 
-            <h5 class="card-title mt-3">Expected Daily, Monthly, Yearly Rewards</h5>
-            <p class="card-text" id="expected-rewards-token1">Loading...</p>
         </div>
 
         <div class="card-image-container">
@@ -284,26 +281,24 @@
 <div class="card mt-4">
     <div class="card-body">
         <div class="card-text-section">
-            <h5 class="card-title">Stake your $BBT for TRX rewards</h5>
+            <h5 class="card-title">Stake your $CFT for USDT rewards</h5>
             <input type="number" id="stake-amount-token2" class="form-control" placeholder="Enter amount to stake">
             <button id="stake-button-token2" class="btn btn-success">Stake</button><br>
             <button id="unstake-button-token2" class="btn btn-danger">Unstake</button>
 
-            <h5 class="card-title mt-3">Total Staked $BBT</h5>
+            <h5 class="card-title mt-3">Total Staked $CFT</h5>
             <p class="card-text" id="total-staked-token2">Loading...</p>
 
-            <h5 class="card-title mt-3">Your Staked $BBT</h5>
+            <h5 class="card-title mt-3">Your Staked $CFT</h5>
             <p class="card-text" id="staked-amount-token2">Loading...</p>
 
             <h5 class="card-title mt-3">Your Staked Percentage</h5>
             <p class="card-text" id="staked-percentage-token2">Loading...</p>
 
-            <h5 class="card-title mt-3">Claimable TRX Rewards</h5>
+            <h5 class="card-title mt-3">Claimable USDT Rewards</h5>
             <p class="card-text" id="claimable-rewards-token2">Loading...</p>
             <button id="claim-rewards-button-token2" class="btn btn-success">Claim Rewards</button>
 
-            <h5 class="card-title mt-3">Expected Daily, Monthly, Yearly Rewards</h5>
-            <p class="card-text" id="expected-rewards-token2">Loading...</p>
         </div>
 
         <div class="card-image-container">
@@ -324,8 +319,8 @@
 <script>
     // Initialize the first staking contract
     initializeStaking(
-        'TTwpF9nE4WpRbBXiEyYkXSfRXaxZWrFmoh', // tokenContractAddress
-        'TDRQaWbdkyxfjYRvhJn85r3eWCfCM7vBBr', // stakingContractAddress
+        'TAQzALyftaynnr3VG3rCvzkY2KouFH79sA', // tokenContractAddress
+        'TVSMKqBk12161JDAQBh9pkdxMAgCtuGrdA', // stakingContractAddress
         {
             stakeButton: 'stake-button-token1',
             unstakeButton: 'unstake-button-token1',
@@ -341,8 +336,8 @@
 
     // Initialize the second staking contract
     initializeStaking(
-        'TGyZUWrL97mmmYJwrC7ZCLVrhbzvHmmWPL', // tokenContractAddress (replace with actual token address)
-        'TXAXaguy6urxDVcQg5ehudtMqHZPhFH6yZ', // stakingContractAddress
+        'TAQzALyftaynnr3VG3rCvzkY2KouFH79sA', // tokenContractAddress (replace with actual token address)
+        'TLtHsWbFXt7oTgBBef1pqQMWehztt71atU', // stakingContractAddress
         {
             stakeButton: 'stake-button-token2',
             unstakeButton: 'unstake-button-token2',
