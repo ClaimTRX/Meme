@@ -647,18 +647,19 @@ async function initializeStaking(
 
   async function updateProjectedMonthlyEarnings() {
     try {
-      const projectedRewards = await stakingContract.methods.viewExpectedRewards(userAddress).call();
-      const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
-      const decimals = await tokenContract.methods.decimals().call();
-      document.getElementById(elementIds.expectedRewards).innerText = `
-        Daily: ${formatNumber(projectedRewards.daily / Math.pow(10, decimals))},
-        Monthly: ${formatNumber(projectedRewards.monthly / Math.pow(10, decimals))},
-        Yearly: ${formatNumber(projectedRewards.yearly / Math.pow(10, decimals))}
-      `;
+        const projectedRewards = await stakingContract.methods.viewExpectedRewards(userAddress).call();
+        const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
+        const decimals = await tokenContract.methods.decimals().call();
+        document.getElementById(elementIds.expectedRewards).innerText = `
+            Daily: ${formatNumber(projectedRewards.daily / Math.pow(10, decimals))},
+            Monthly: ${formatNumber(projectedRewards.monthly / Math.pow(10, decimals))},
+            Yearly: ${formatNumber(projectedRewards.yearly / Math.pow(10, decimals))}
+        `;
     } catch (error) {
-      console.error("Error fetching projected monthly earnings:", error);
+        console.error("Error fetching projected monthly earnings:", error);
     }
-  }
+}
+
 
   function formatNumber(num) {
     return parseFloat(num).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
