@@ -770,8 +770,8 @@ async function connectWallet() {
 }
 
 // Event listener for the stake button
-document.getElementById('stake-button-token1').addEventListener('click', async () => {
-    const amount = document.getElementById('stake-amount-token1').value;
+document.getElementById('stake-button-token2').addEventListener('click', async () => {
+    const amount = document.getElementById('stake-amount-token2').value;
     if (amount > 0) {
         await stakeToken(amount);
         // Update UI after 4 seconds
@@ -786,8 +786,8 @@ document.getElementById('stake-button-token1').addEventListener('click', async (
 });
 
 // Event listener for the unstake button
-document.getElementById('unstake-button-token1').addEventListener('click', async () => {
-    const amount = document.getElementById('stake-amount-token1').value;
+document.getElementById('unstake-button-token2').addEventListener('click', async () => {
+    const amount = document.getElementById('stake-amount-token2').value;
     if (amount > 0) {
         await unstakeToken(amount);
         // Update UI after 4 seconds
@@ -802,7 +802,7 @@ document.getElementById('unstake-button-token1').addEventListener('click', async
 });
 
 // Event listener for the claim rewards button
-document.getElementById('claim-rewards-button-token1').addEventListener('click', async () => {
+document.getElementById('claim-rewards-button-token2').addEventListener('click', async () => {
     await claimRewards();
     // Update UI after 4 seconds
     setTimeout(async () => {
@@ -878,13 +878,13 @@ async function updateStakedDetails() {
         }
 
         // Display the total staked tokens
-        document.getElementById('total-staked-token1').innerText = formatNumber(totalStaked) + ' $SUNRAT';
+        document.getElementById('total-staked-token2').innerText = formatNumber(totalStaked) + ' $BBT';
 
         // Display the wallet's staked tokens
-        document.getElementById('staked-amount-token1').innerText = formatNumber(walletStaked) + ' $SUNRAT';
+        document.getElementById('staked-amount-token2').innerText = formatNumber(walletStaked) + ' $BBT';
 
         // Display the wallet's staked percentage
-        document.getElementById('staked-percentage-token1').innerText = stakedPercentage.toFixed(2) + ' %';
+        document.getElementById('staked-percentage-token2').innerText = stakedPercentage.toFixed(2) + ' %';
 
     } catch (error) {
         console.error('Error updating staked details:', error);
@@ -911,10 +911,10 @@ async function updateProjectedMonthlyEarnings() {
         const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
         const decimals = await tokenContract.methods.decimals().call();
         const monthlyEarnings = projectedRewards.monthly / Math.pow(10, decimals);
-        document.getElementById('expected-rewards-token1').innerText = `
-            Daily: ${formatNumber(projectedRewards.daily / Math.pow(10, decimals))} TRX, 
-            Monthly: ${formatNumber(monthlyEarnings)} TRX, 
-            Yearly: ${formatNumber(projectedRewards.yearly / Math.pow(10, decimals))} TRX
+        document.getElementById('expected-rewards-token2').innerText = `
+            Daily: ${formatNumber(projectedRewards.daily / Math.pow(10, decimals))} BBT, 
+            Monthly: ${formatNumber(monthlyEarnings)} BBT, 
+            Yearly: ${formatNumber(projectedRewards.yearly / Math.pow(10, decimals))} BBT
         `;
     } catch (error) {
         console.error('Error fetching projected monthly earnings:', error);
