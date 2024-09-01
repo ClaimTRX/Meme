@@ -1,7 +1,3 @@
-document.addEventListener("DOMContentLoaded", function() {
-    // Your existing initializeStaking2 function here
-    initializeStaking2();
-});
 
 async function connectWallet() {
     try {
@@ -58,6 +54,12 @@ async function initializeStaking2() {
         await updateClaimableRewards();
         await updateProjectedEarnings();
     }
+
+    document.addEventListener("DOMContentLoaded", function() {
+    // Your existing initializeStaking2 function here
+    initializeStaking2();
+});
+
 
     async function stakeTokens() {
         const amount = document.getElementById(elementIds.stakeAmount).value;
