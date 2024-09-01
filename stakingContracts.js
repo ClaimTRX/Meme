@@ -647,21 +647,22 @@ async function initializeStaking(
 
   async function updateProjectedEarnings() {
     try {
-        // Fetch the expected rewards from the token2 contract
+        // Fetch the expected rewards from the staking contract
         const projectedRewards = await stakingContract.methods.viewExpectedRewards(userAddress).call();
 
         // Log the raw values for debugging
         console.log('Raw projected rewards:', projectedRewards);
 
-        // Assuming the rewards are in the smallest unit, convert them
+        // Initialize the token contract to fetch decimals
         const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
         const decimals = await tokenContract.methods.decimals().call();
-        
+
+        // Convert the rewards from the smallest unit (e.g., TRX has 6 decimals)
         const dailyEarnings = projectedRewards.daily / Math.pow(10, decimals);
         const monthlyEarnings = projectedRewards.monthly / Math.pow(10, decimals);
         const yearlyEarnings = projectedRewards.yearly / Math.pow(10, decimals);
 
-        // Displaying the earnings
+        // Display the converted earnings
         document.getElementById(elementIds.dailyEarnings).innerText = `Daily: ${formatNumber(dailyEarnings)} TRX`;
         document.getElementById(elementIds.monthlyEarnings).innerText = `Monthly: ${formatNumber(monthlyEarnings)} TRX`;
         document.getElementById(elementIds.yearlyEarnings).innerText = `Yearly: ${formatNumber(yearlyEarnings)} TRX`;
@@ -669,6 +670,7 @@ async function initializeStaking(
         console.error("Error fetching projected earnings:", error);
     }
 }
+
 
 
 
