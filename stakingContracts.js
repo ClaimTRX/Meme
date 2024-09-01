@@ -1,5 +1,3 @@
-// stakingContracts.js
-
 // Define the token contract ABI
 const tokenContractAbi = [
     {
@@ -538,60 +536,71 @@ async function initializeStaking(
   }
 
   // Function to stake tokens
-async function stakeTokens(token, amount) {
-    try {
-        const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContracts[token]);
+  async function stakeTokens() {
+    const amount = document.getElementById(elementIds.stakeAmount).value;
+    if (amount > 0) {
+      try {
+        const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
         const decimals = await tokenContract.methods.decimals().call();
 
         // Convert the amount to the smallest unit using BigInt for safe handling
         const amountToStake = BigInt(amount) * BigInt(10 ** decimals);
 
         // Step 1: Approve the staking contract to spend the tokens
-        await tokenContract.methods.approve(stakingContractAddresses[token], amountToStake.toString()).send();
+        await tokenContract.methods.approve(stakingContractAddress, amountToStake.toString()).send();
 
         // Step 2: Stake the tokens
-        await stakingContracts[token].methods.stake(amountToStake.toString()).send();
+        await stakingContract.methods.stake(amountToStake.toString()).send();
 
-        // Step 3: Update the UI to reflect the new staked amount
-        await updateStakedAmount(token);
-    } catch (error) {
-        console.error(`Error staking tokens for ${token}:`, error);
+        // Update the UI to reflect the new staked amount
+        await updateStakedDetails();
+        await updateClaimableRewards();
+        await updateProjectedMonthlyEarnings();
+      } catch (error) {
+        console.error("Error staking tokens:", error);
+      }
+    } else {
+      console.error("Please enter a valid amount to stake.");
     }
-}
+  }
 
-// Function to unstake tokens
-async function unstakeTokens(token) {
+  // Function to unstake tokens
+  async function unstakeTokens() {
+    const amount = document.getElementById(elementIds.stakeAmount).value;
+    if (amount > 0) {
+      try {
+        const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
+        const decimals = await tokenContract.methods.decimals().call();
+
+        // Convert the amount to the smallest unit using BigInt
+        const amountToUnstake = BigInt(amount) * BigInt(10 ** decimals);
+
+        // Unstake the tokens
+        await stakingContract.methods.withdraw(amountToUnstake.toString()).send();
+
+        // Update the UI to reflect the new staked amount
+        await updateStakedDetails();
+        await updateClaimableRewards();
+        await updateProjectedMonthlyEarnings();
+      } catch (error) {
+        console.error("Error unstaking tokens:", error);
+      }
+    } else {
+      console.error("Please enter a valid amount to unstake.");
+    }
+  }
+
+  // Function to claim rewards
+  async function claimRewards() {
     try {
-        const unstakeAmount = document.getElementById(`stake-amount-${token}`).value;
-        if (unstakeAmount) {
-            const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContracts[token]);
-            const decimals = await tokenContract.methods.decimals().call();
-
-            // Convert the amount to the smallest unit using BigInt
-            const amountToUnstake = BigInt(unstakeAmount) * BigInt(10 ** decimals);
-
-            // Unstake the tokens
-            await stakingContracts[token].methods.withdraw(amountToUnstake.toString()).send();
-
-            // Update the UI to reflect the new staked amount
-            await updateStakedAmount(token);
-        }
+      await stakingContract.methods.claimReward().send();
+      await updateStakedDetails();
+      await updateClaimableRewards();
+      await updateProjectedMonthlyEarnings();
     } catch (error) {
-        console.error(`Error unstaking tokens for ${token}:`, error);
+      console.error("Error claiming rewards:", error);
     }
-}
-
-// Function to claim rewards
-async function claimRewards(token) {
-    try {
-        await stakingContracts[token].methods.claimReward().send();
-        await updateClaimableRewards(token);
-        await updateTotalClaimed(token);
-    } catch (error) {
-        console.error(`Error claiming rewards for ${token}:`, error);
-    }
-}
-
+  }
 
   async function updateStakedDetails() {
     try {
@@ -657,40 +666,15 @@ async function claimRewards(token) {
 
   // Event listeners
   document.getElementById(elementIds.stakeButton).addEventListener("click", async () => {
-    const amount = document.getElementById(elementIds.stakeAmount).value;
-    if (amount > 0) {
-      await stakeToken(amount);
-      setTimeout(async () => {
-        await updateStakedDetails();
-        await updateClaimableRewards();
-        await updateProjectedMonthlyEarnings();
-      }, 4000);
-    } else {
-      console.error("Please enter a valid amount to stake.");
-    }
+    await stakeTokens();
   });
 
   document.getElementById(elementIds.unstakeButton).addEventListener("click", async () => {
-    const amount = document.getElementById(elementIds.stakeAmount).value;
-    if (amount > 0) {
-      await unstakeToken(amount);
-      setTimeout(async () => {
-        await updateStakedDetails();
-        await updateClaimableRewards();
-        await updateProjectedMonthlyEarnings();
-      }, 4000);
-    } else {
-      console.error("Please enter a valid amount to unstake.");
-    }
+    await unstakeTokens();
   });
 
   document.getElementById(elementIds.claimRewardsButton).addEventListener("click", async () => {
     await claimRewards();
-    setTimeout(async () => {
-      await updateStakedDetails();
-      await updateClaimableRewards();
-      await updateProjectedMonthlyEarnings();
-    }, 4000);
   });
 
   document.getElementById("connect-button").addEventListener("click", async () => {
@@ -702,6 +686,7 @@ async function claimRewards(token) {
     await connectWallet();
   });
 }
+
 
 
 
