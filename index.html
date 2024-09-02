@@ -318,6 +318,21 @@
 
     <!-- Add your initialization script here -->
 <script>
+
+    async function initializeStakingContracts() {
+    try {
+        if (!tronWeb || !tronWeb.contract) {
+            throw new Error('tronWeb is not initialized correctly');
+        }
+        for (let token in stakingContractAddresses) {
+            stakingContracts[token] = await tronWeb.contract(stakingContractAbi, stakingContractAddresses[token]);
+        }
+        console.log('Staking contracts initialized:', stakingContracts);
+    } catch (error) {
+        console.error('Error initializing staking contracts:', error);
+    }
+}
+
     document.addEventListener("DOMContentLoaded", async function () {
         try {
             await initializeStakingContracts();  // Ensure this runs before using the staking contracts
