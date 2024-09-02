@@ -1,39 +1,44 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    if (await checkTronLinkInstalled()) {
-        await initializeTronWeb();
-        setInterval(updateAllUI, 60000); // Update UI every minute
-    }
+    try {
+        if (await checkTronLinkInstalled()) {
+            await initializeTronWeb();
+            await initializeStakingContracts(); // Initialize staking contracts first
+            setInterval(updateAllUI, 60000); // Update UI every minute
+        }
 
-    // Event listeners for staking, unstaking, and claiming rewards
-    document.getElementById('stake-button-token1').addEventListener('click', async () => {
-        const stakeAmount = document.getElementById('stake-amount-token1').value;
-        if (stakeAmount) {
-            try {
-                await stakeTokens('token1', stakeAmount);
-                setTimeout(updateAllUI, 4000); // Update the UI 4 seconds after staking
-            } catch (error) {
-                console.error('Error staking tokens:', error);
+        // Event listeners for staking, unstaking, and claiming rewards
+        document.getElementById('stake-button-token1').addEventListener('click', async () => {
+            const stakeAmount = document.getElementById('stake-amount-token1').value;
+            if (stakeAmount) {
+                try {
+                    await stakeTokens('token1', stakeAmount);
+                    setTimeout(updateAllUI, 4000); // Update the UI 4 seconds after staking
+                } catch (error) {
+                    console.error('Error staking tokens:', error);
+                }
             }
-        }
-    });
+        });
 
-    document.getElementById('unstake-button-token1').addEventListener('click', async () => {
-        try {
-            await unstakeTokens('token1');
-            setTimeout(updateAllUI, 4000); // Update the UI 4 seconds after unstaking
-        } catch (error) {
-            console.error('Error unstaking tokens:', error);
-        }
-    });
+        document.getElementById('unstake-button-token1').addEventListener('click', async () => {
+            try {
+                await unstakeTokens('token1');
+                setTimeout(updateAllUI, 4000); // Update the UI 4 seconds after unstaking
+            } catch (error) {
+                console.error('Error unstaking tokens:', error);
+            }
+        });
 
-    document.getElementById('claim-rewards-button-token1').addEventListener('click', async () => {
-        try {
-            await claimRewards('token1');
-            setTimeout(updateAllUI, 4000); // Update the UI 4 seconds after claiming rewards
-        } catch (error) {
-            console.error('Error claiming rewards:', error);
-        }
-    });
+        document.getElementById('claim-rewards-button-token1').addEventListener('click', async () => {
+            try {
+                await claimRewards('token1');
+                setTimeout(updateAllUI, 4000); // Update the UI 4 seconds after claiming rewards
+            } catch (error) {
+                console.error('Error claiming rewards:', error);
+            }
+        });
+    } catch (error) {
+        console.error('Error during initialization:', error);
+    }
 });
 
 // Contract addresses and ABI
@@ -47,8 +52,13 @@ let stakingContracts = {};
 
 // Initialize staking contracts
 async function initializeStakingContracts() {
-    for (let token in stakingContractAddresses) {
-        stakingContracts[token] = await tronWeb.contract(stakingContractAbi, stakingContractAddresses[token]);
+    try {
+        for (let token in stakingContractAddresses) {
+            stakingContracts[token] = await tronWeb.contract(stakingContractAbi, stakingContractAddresses[token]);
+        }
+        console.log('Staking contracts initialized:', stakingContracts);
+    } catch (error) {
+        console.error('Error initializing staking contracts:', error);
     }
 }
 
@@ -105,7 +115,7 @@ async function updateTotalClaimedAllUsers(token) {
 // Function to update the daily reward
 async function updateDailyReward(token) {
     try {
-        const dailyReward = await stakingContracts[token].methods.dailyReward().call();
+        const dailyReward = await stakingContracts[token].methods.viewDailyReward().call();
         const dailyRewardInTrx = tronWeb.fromSun(dailyReward);
         document.getElementById(`daily-reward-${token}`).innerText = `Daily TRX Reward: ${dailyRewardInTrx} TRX`;
     } catch (error) {
@@ -173,7 +183,7 @@ async function stakeTokens(token, amount) {
 
         const amountToStake = BigInt(amount) * BigInt(Math.pow(10, decimals));
 
-        await tokenContract.methods.approve(stakingContractAddresses[token], maxUint256).send();
+        await tokenContract.methods.approve(stakingContractAddresses[token], tronWeb.toSun(maxUint256)).send();
         await stakingContracts[token].methods.stake(amountToStake.toString()).send();
 
         await updateStakedAmount(token);
@@ -221,3 +231,4 @@ function formatNumber(num) {
 function formatWholeNumber(num) {
     return Math.floor(parseFloat(num)).toLocaleString('en-US');
 }
+
