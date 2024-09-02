@@ -309,24 +309,54 @@
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tronweb/dist/TronWeb.min.js"></script>
-    <script src="connectWallet.js"></script>
-    <script src="cards.js"></script> <!-- New script for card logic -->
-    <script src="contractAbi.js"></script>
+    <script src="stakingContracts.js"></script>
+    <script src="contractsAbi.js"></script>
     <script src="tokenAbi.js"></script>
+    <script src="connectWallet.js"></script>
+    <script src="cards.js"></script>
 
-    <!-- Include the wallet connection script -->
-    
+    <!-- Add your initialization script here -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            initializeStaking(
+                'TTwpF9nE4WpRbBXiEyYkXSfRXaxZWrFmoh', // tokenContractAddress
+                'TDRQaWbdkyxfjYRvhJn85r3eWCfCM7vBBr', // stakingContractAddress
+                {
+                    stakeButton: 'stake-button-token1',
+                    unstakeButton: 'unstake-button-token1',
+                    claimRewardsButton: 'claim-rewards-button-token1',
+                    stakeAmount: 'stake-amount-token1',
+                    totalStaked: 'total-staked-token1',
+                    stakedAmount: 'staked-amount-token1',
+                    stakedPercentage: 'staked-percentage-token1',
+                    claimableRewards: 'claimable-rewards-token1',
+                }
+            );
 
-    <!-- Include the staking contract script -->
-    <script src="stakingContract1.js"></script>
-
+            initializeStaking(
+                'TGyZUWrL97mmmYJwrC7ZCLVrhbzvHmmWPL', // tokenContractAddress (token2)
+                'TR8twAsnRHCDTy4MWdCtNaNBPwWaeUFeRs', // stakingContractAddress (token2)
+                {
+                    stakeButton: 'stake-button-token2',
+                    unstakeButton: 'unstake-button-token2',
+                    claimRewardsButton: 'claim-rewards-button-token2',
+                    stakeAmount: 'stake-amount-token2',
+                    totalStaked: 'total-staked-token2',
+                    stakedAmount: 'staked-amount-token2',
+                    stakedPercentage: 'staked-percentage-token2',
+                    claimableRewards: 'claimable-rewards-token2',
+                    dailyEarnings: 'daily-earnings-token2',
+                    monthlyEarnings: 'monthly-earnings-token2',
+                    yearlyEarnings: 'yearly-earnings-token2'
+                }
+            );
+        });
+    </script>
 </body>
-
 </html>
-
 
 
 
