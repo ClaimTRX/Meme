@@ -319,8 +319,10 @@
     <script src="cards.js"></script>
 
     <!-- Add your initialization script here -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
+<script>
+    document.addEventListener("DOMContentLoaded", async function () {
+        try {
+            await initializeStakingContracts();  // Ensure this runs before using the staking contracts
             initializeStaking(
                 'TTwpF9nE4WpRbBXiEyYkXSfRXaxZWrFmoh', // tokenContractAddress
                 'TDRQaWbdkyxfjYRvhJn85r3eWCfCM7vBBr', // stakingContractAddress
@@ -348,13 +350,14 @@
                     stakedAmount: 'staked-amount-token2',
                     stakedPercentage: 'staked-percentage-token2',
                     claimableRewards: 'claimable-rewards-token2',
-                    dailyEarnings: 'daily-earnings-token2',
-                    monthlyEarnings: 'monthly-earnings-token2',
-                    yearlyEarnings: 'yearly-earnings-token2'
                 }
             );
-        });
-    </script>
+        } catch (error) {
+            console.error('Error during initialization:', error);
+        }
+    });
+</script>
+
 </body>
 </html>
 
