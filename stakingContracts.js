@@ -635,15 +635,20 @@ async function initializeStaking(
 
   async function updateClaimableRewards() {
     try {
-      const claimableRewardsRaw = await stakingContract.methods.viewPendingReward(userAddress).call();
-      const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
-      const decimals = await tokenContract.methods.decimals().call();
-      const claimableRewards = claimableRewardsRaw / Math.pow(10, decimals);
-      document.getElementById(elementIds.claimableRewards).innerText = formatNumber(claimableRewards);
+        const claimableRewardsRaw = await stakingContract.methods.viewPendingReward(userAddress).call();
+        console.log("Raw claimable rewards:", claimableRewardsRaw); // Debugging output
+
+        const tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
+        const decimals = await tokenContract.methods.decimals().call();
+        const claimableRewards = claimableRewardsRaw / Math.pow(10, decimals);
+        
+        console.log("Formatted claimable rewards:", claimableRewards); // Debugging output
+        document.getElementById(elementIds.claimableRewards).innerText = formatNumber(claimableRewards);
     } catch (error) {
-      console.error("Error fetching claimable rewards:", error);
+        console.error("Error fetching claimable rewards:", error);
     }
-  }
+}
+
 
   async function updateProjectedEarnings() {
     try {
