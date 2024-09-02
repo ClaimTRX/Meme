@@ -489,15 +489,19 @@ async function initializeStaking(
 
   async function initializeTronWeb() {
     try {
-      if (!window.tronWeb || !window.tronWeb.defaultAddress.base58) {
+      tronWeb = new TronWeb({
+        fullHost: 'https://mainnet.tron.tronql.com',
+        headers: { "Authorization": 'f2bs1aadbtcizeotovnwh4k89qvghz' },
+      });
+
+      if (!tronWeb || !tronWeb.defaultAddress.base58) {
         console.error("TronWeb not found or wallet not connected.");
         return;
       }
 
-      tronWeb = window.tronWeb;
       userAddress = tronWeb.defaultAddress.base58;
 
-      console.log("TronWeb initialized:", tronWeb);
+      console.log("TronWeb initialized with custom node:", tronWeb);
       console.log("User Address:", userAddress);
 
       document.getElementById("connect-button").style.display = "none";
@@ -508,7 +512,7 @@ async function initializeStaking(
       // Update the UI with staked details and claimable rewards
       await updateStakedDetails();
       await updateClaimableRewards();
-     await updateProjectedEarnings();
+      await updateProjectedEarnings();
     } catch (error) {
       console.error("Error initializing TronWeb:", error);
     }
@@ -535,6 +539,28 @@ async function initializeStaking(
     }
   }
 
+  async function getCurrentBlock() {
+    try {
+      const response = await fetch('https://mainnet.tron.tronql.com/wallet/getnowblock', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'f2bs1aadbtcizeotovnwh4k89qvghz',
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Current Block:", data);
+      return data;
+    } catch (error) {
+      console.error("Error fetching the current block:", error);
+    }
+  }
+
   // Function to stake tokens
   async function stakeTokens() {
     const amount = document.getElementById(elementIds.stakeAmount).value;
@@ -555,7 +581,7 @@ async function initializeStaking(
         // Update the UI to reflect the new staked amount
         await updateStakedDetails();
         await updateClaimableRewards();
-       await updateProjectedEarnings();
+        await updateProjectedEarnings();
       } catch (error) {
         console.error("Error staking tokens:", error);
       }
@@ -669,12 +695,7 @@ async function initializeStaking(
     } catch (error) {
         console.error("Error fetching projected earnings:", error);
     }
-}
-
-
-
-
-
+  }
 
   function formatNumber(num) {
     return parseFloat(num).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
@@ -695,13 +716,16 @@ async function initializeStaking(
 
   document.getElementById("connect-button").addEventListener("click", async () => {
     await connectWallet();
+    const currentBlock = await getCurrentBlock();
   });
 
   // Initialize TronWeb when the document is ready
   document.addEventListener("DOMContentLoaded", async () => {
     await connectWallet();
+    const currentBlock = await getCurrentBlock();
   });
 }
+
 
 
 
