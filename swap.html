@@ -479,9 +479,7 @@
         // Hide connect wallet button once connected
         document.getElementById('connect-button').style.display = 'none';
 
-        // Display user address in the topbar
-        document.getElementById('user-address').textContent = `Connected: ${userAddress}`;
-
+        
         // Optionally, update the balance or other info
         await updateBalance();
       } catch (error) {
