@@ -100,9 +100,28 @@
       margin: 20px auto;
     }
 
-    .card-body {
+    .card-image-container {
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .card-image {
+      width: 100%;
+      max-width: 400px;
+      height: auto;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .card-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: 20px;
+      width: 100%;
     }
 
     .card-title {
@@ -252,43 +271,93 @@
       }
     }
 
-    @media (min-width: 768px) {
-      .card-body {
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: flex-start;
-      }
+    /* For screens wider than 768px */
+@media (min-width: 768px) {
+  .card-body {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
 
-      .card-text-section {
-        flex: 1;
-        margin-left: 20px;
-      }
+  .card-text-section {
+    flex: 1;
+    margin-left: 20px;
+  }
 
-      .widget-container {
-        flex: 0 0 50%;
-      }
+  .widget-container {
+    flex: 0 0 50%;
+  }
 
-      .widget-container iframe {
-        width: 100%;
-      }
-    }
+  .widget-container iframe {
+    width: 100%;
+  }
+}
 
-    .widget-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      padding: 20px;
-    }
+/* For mobile responsiveness - screens smaller than 768px */
+@media (max-width: 767.98px) {
+  .sidebar {
+    height: auto;
+    padding: 10px;
+    width: 100%;
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+  }
 
-    @media (max-width: 767.98px) {
-      .widget-container {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 10px;
-      }
-    }
-  </style>
+  .topbar {
+    margin-left: 0;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+
+  .card-body {
+    grid-template-columns: 1fr;
+  }
+
+  .card-text-section {
+    width: 100%;
+    padding: 0 10px;
+    margin-bottom: 20px;
+  }
+
+  .card-image-container {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .card-image {
+    width: 80%; /* Slightly larger image for mobile */
+    max-width: 250px;
+    margin-bottom: 20px;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .telegram-link {
+    margin-top: 20px;
+  }
+
+  .widget-container {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 10px;
+  }
+}
+</style>
 </head>
 <body>
   <div class="sidebar">
@@ -319,14 +388,17 @@
         <div class="widget-container">
           <div id="jmSwapFrame"></div>
         </div>
-        <div class="card-text-section">
-          <p class="card-title">JustMoney Swap</p>
-          <p>Use the JM Swap widget to swap your favorite tokens. </p>
-          <div id="visitText"><a href="https://explorer.just.money/" target="_blank" rel="noopener noreferrer">Visit the new JustMoney Explorer</a></div>
+         <div class="card-image-container mt-4">
+           <img src="https://raw.githubusercontent.com/ClaimTRX/Test/main/66d7dce3f08bf_download.jpg" class="card-image" alt="Token Image">
+            <!-- Telegram Link -->
+            <div class="telegram-link mt-3">
+              <a href="https://t.me/claimfreetrxnow" target="_blank">
+                <i class="fab fa-telegram-plane"></i> Join our Telegram
+              </a>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
    
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
