@@ -215,6 +215,31 @@
       .card-explanation {
         font-size: 1rem;
       }
+      
+      /* Adjust card body layout for mobile */
+@media (max-width: 767.98px) {
+  .card-body {
+    display: block;
+  }
+
+  .listing {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .listing p {
+    word-break: break-all;
+    margin-bottom: 5px;
+    font-size: 14px; /* Adjust text size */
+  }
+
+  .listing button {
+    width: 100%; /* Ensure buttons take full width */
+    margin-bottom: 10px;
+  }
+}
+
     }
 
   </style>
