@@ -362,9 +362,7 @@
         inputContainerInputPlaceholderStyle: "color: #ffffff;opacity: 0.5;"
       });
 
-   // TronLink connection
-document.addEventListener('DOMContentLoaded', async () => {
-  document.getElementById('connect-button').addEventListener('click', connectWallet);
+   
 
   if (await checkTronLinkInstalled()) {
     await initializeTronWeb();
@@ -373,6 +371,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('TronLink is not installed.');
   }
 });
+
+    // TronLink connection
+document.addEventListener('DOMContentLoaded', async () => {
+  document.getElementById('connect-button').addEventListener('click', connectWallet);
 
 // Check if TronLink is installed
 async function checkTronLinkInstalled() {
