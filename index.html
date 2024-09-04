@@ -11,7 +11,7 @@
     body {
       background-color: #1a1a2e;
       color: #fff;
-      font-family: Arial, sans-serif;
+      font-family: 'Arial', sans-serif;
     }
 
     .sidebar {
@@ -101,53 +101,50 @@
       padding: 20px;
       display: flex;
       flex-direction: column;
-      align-items: center;
       max-width: 1200px;
       margin: 20px auto;
     }
 
-    .card-image-container {
+    .card-body {
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: center;
+    }
+
+    .card-text-section {
+      flex: 1;
+      padding-right: 20px;
+    }
+
+    .card-text-section p {
+      font-size: 18px;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .card-image-container {
+      flex: 1;
       text-align: center;
-      margin-bottom: 20px;
     }
 
     .card-image {
       width: 100%;
-      max-width: 400px;
+      max-width: 300px;
       height: auto;
       border-radius: 10px;
-      margin-bottom: 10px;
     }
 
-    .card-body {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-gap: 20px;
-      width: 100%;
-    }
-
-    .card-text-section {
-      width: 100%;
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 5px;
-      margin-bottom: 10px;
-    }
-
-    .btn {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 5px;
+    .telegram-link {
       margin-top: 10px;
+    }
+
+    .telegram-link a {
+      color: #1DA1F2;
+      font-size: 18px;
+      text-decoration: none;
+    }
+
+    .telegram-link a:hover {
+      text-decoration: underline;
     }
 
      /* Mobile responsiveness */
@@ -172,18 +169,11 @@
       }
 
       .card-body {
-        grid-template-columns: 1fr;
-      }
-
-      .card-text-section {
-        width: 100%;
-        padding: 0 10px;
-        margin-bottom: 20px;
+        flex-direction: column;
       }
 
       .card-image-container {
-        width: 100%;
-        margin-bottom: 20px;
+        margin-top: 20px;
       }
 
       .card-image {
@@ -191,23 +181,6 @@
         max-width: 250px;
         margin-bottom: 20px;
       }
-
-      .btn {
-        width: 100%;
-        padding: 12px;
-        font-size: 14px;
-      }
-
-      .form-control {
-        width: 100%;
-        padding: 12px;
-        font-size: 14px;
-      }
-
-      .telegram-link {
-        margin-top: 20px;
-      }
-    
     }
   </style>
 </head>
@@ -229,27 +202,28 @@
       </a>
     </div>
   </div>
-  <div class="topbar">
-    
-  </div>
+  <div class="topbar"></div>
   <div class="main-content">
     <h1>Welcome</h1>
 
-   <div class="card mt-4">
-  <div class="card-body">
-    <div class="card-text-section">
-      <p>Welcome to CFT, the most rewarding ecosystem in the entire Tron Space.</p>
-      <p>Buy and stake CFT for TRX or USDT rewards, stake multiple meme tokens for various rewards, and also try to claim some free TRX daily.</p>
-      <div class="card-image-container mt-4">
-        <img src="https://raw.githubusercontent.com/ClaimTRX/Test/main/66d7dce3f08bf_download.jpg" class="card-image" alt="Token Image">
-        <!-- Telegram Link -->
-        <div class="telegram-link mt-3">
-          <a href="https://t.me/claimfreetrxnow" target="_blank">
-            <i class="fab fa-telegram-plane"></i> Join our Telegram
-          </a>
+    <div class="card mt-4">
+      <div class="card-body">
+        <div class="card-text-section">
+          <p>Welcome to CFT, the most rewarding ecosystem in the entire Tron Space.</p>
+          <p>Buy and stake CFT for TRX or USDT rewards, stake multiple meme tokens for various rewards, and also try to claim some free TRX daily.</p>
+        </div>
+        <div class="card-image-container">
+          <img src="https://raw.githubusercontent.com/ClaimTRX/Test/main/66d7dce3f08bf_download.jpg" class="card-image" alt="Token Image">
+          <!-- Telegram Link -->
+          <div class="telegram-link mt-3">
+            <a href="https://t.me/claimfreetrxnow" target="_blank">
+              <i class="fab fa-telegram-plane"></i> Join our Telegram
+            </a>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+</body>
+</html>
 
