@@ -38,14 +38,36 @@
       background-color: #1f4068;
     }
 
+    .sidebar .social-links {
+      display: flex;
+      margin-top: 20px;
+    }
+
+    .sidebar .social-icon {
+      color: white;
+      font-size: 20px;
+      margin-right: 10px;
+      text-decoration: none;
+    }
+
+    .sidebar .social-icon:last-child {
+      margin-right: 0;
+    }
+
     .topbar {
       background-color: #162447;
       padding: 10px;
-      text-align: right;
       margin-left: 200px;
       display: flex;
-      align-items: center;
       justify-content: flex-end;
+      align-items: center;
+    }
+
+    .topbar a.social-icon {
+      color: white;
+      margin-left: 15px;
+      font-size: 20px;
+      text-decoration: none;
     }
 
     .topbar button {
@@ -70,25 +92,127 @@
       border-radius: 10px;
       margin-bottom: 20px;
       padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 1200px;
+      margin: 20px auto;
+    }
+
+    .card-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: 20px;
+      width: 100%;
+    }
+
+    .card-text-section {
+      width: 100%;
+    }
+
+    .card-image-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .main-content h1 {
+      text-align: center;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .card-image {
+      width: 100%;
+      max-width: 400px;
+      height: auto;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .telegram-link {
+      margin-top: 10px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      margin-top: 10px;
     }
 
     .form-control {
       width: 100%;
-      padding: 8px;
-      font-size: 0.875rem;
+      padding: 10px;
+      font-size: 16px;
       border-radius: 5px;
       margin-bottom: 10px;
     }
 
-    .btn-success,
-    .btn-danger {
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 0.875rem;
-      padding: 8px 16px;
-      width: 100%;
-      margin-top: 10px;
+    /* Mobile responsiveness */
+    @media (max-width: 767.98px) {
+      .sidebar {
+        height: auto;
+        padding: 10px;
+        width: 100%;
+        position: relative;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .topbar {
+        margin-left: 0;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .card-body {
+        grid-template-columns: 1fr;
+      }
+
+      .card-text-section {
+        width: 100%;
+        padding: 0 10px;
+        margin-bottom: 20px;
+      }
+
+      .card-image-container {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+
+      .card-image {
+        width: 80%; /* Slightly larger image for mobile */
+        max-width: 250px;
+        margin-bottom: 20px;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 14px;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 12px;
+        font-size: 14px;
+      }
+
+      .telegram-link {
+        margin-top: 20px;
+      }
     }
 
   </style>
@@ -134,11 +258,17 @@
         <p class="card-text" id="total-staked">Loading...</p>
         <button id="claim-rewards-button" class="btn btn-success">Claim Rewards</button>
       </div>
-    </div>
-
-    
-    </div>
-  </div>
+    <div class="card-image-container">
+          <img src="https://raw.githubusercontent.com/ClaimTRX/Test/main/66cf0a6d09572_download.jpg" class="card-image" alt="Token Image">
+          <!-- Telegram Link -->
+          <div class="telegram-link">
+            <a href="https://t.me/babyturu" target="_blank">
+              <i class="fab fa-telegram-plane"></i> Join our Telegram
+            </a>
+          </div>
+        </div> <!-- Close .card-image-container -->
+      </div> <!-- Close .card-body -->
+    </div> <!-- Close .card -->
 
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tronweb/dist/TronWeb.min.js"></script>
