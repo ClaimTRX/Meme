@@ -312,7 +312,7 @@
      
   </div>
   <div class="topbar">
-    <button id="connect-button" onclick="connectWallet()">Connect Wallet</button>
+    
   </div>
   <div class="main-content">
     <div class="card">
@@ -361,38 +361,10 @@
         inputContainerInputPlaceholderStyle: "color: #ffffff;opacity: 0.5;"
       });
 
-      if (await checkTronLinkInstalled()) {
-        await initializeTronWeb();
-      }
-    });
+      
+    
 
-    async function checkTronLinkInstalled() {
-      return new Promise((resolve) => {
-        const interval = setInterval(() => {
-          if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
-            clearInterval(interval);
-            resolve(true);
-          }
-        }, 1000);
-      });
-    }
-
-    async function initializeTronWeb() {
-      tronWeb = window.tronWeb;
-      userAddress = tronWeb.defaultAddress.base58;
-
-      document.getElementById('connect-button').style.display = 'none'; // Hide the button
-
-      console.log('Connected to TronLink.');
-      console.log('User Address:', userAddress);
-
-      try {
-        const balance = await tronWeb.trx.getBalance(userAddress);
-        console.log('Balance:', tronWeb.fromSun(balance), 'TRX');
-      } catch (error) {
-        console.error('Error getting balance:', error);
-      }
-    }
+    
 
     function switchLanguage(language) {
       if (language === 'zh') {
@@ -402,13 +374,7 @@
       }
     }
 
-    async function connectWallet() {
-      if (await checkTronLinkInstalled()) {
-        await initializeTronWeb();
-      } else {
-        console.log('Please install TronLink extension in your browser.');
-      }
-    }
+    
   </script>
 </body>
 </html>
