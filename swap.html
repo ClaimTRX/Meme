@@ -403,10 +403,6 @@ async function initializeTronWeb() {
 
     if (!userAddress) throw new Error('User address not available');
 
-    // Initialize contracts using ABI and contract addresses
-    newStakingContract = await tronWeb.contract(newStakingContractAbi, newStakingContractAddress);
-    tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
-
     console.log('Connected to TronLink.');
     console.log('User Address:', userAddress);
     console.log('Contracts initialized successfully');
