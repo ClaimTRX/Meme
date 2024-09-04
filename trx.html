@@ -232,7 +232,7 @@
     <div class="card mt-4">
       <div class="card-body">
         <div class="card-text-section">
-          <p class="card-text" id="available-cft">Loading...</p>
+          
           <input type="number" id="stake-amount" class="form-control" placeholder="Enter amount">
           <button id="stake-button" class="btn btn-success">Stake</button><br>
           <button id="unstake-button" class="btn btn-danger">Unstake</button>
@@ -247,7 +247,7 @@
           <button id="claim-rewards-button" class="btn btn-success">Claim Rewards</button>
         </div>
         <div class="card-image-container">
-          <img src="https://raw.githubusercontent.com/ClaimTRX/Test/main/66cf0a6d09572_download.jpg" class="card-image" alt="Token Image">
+           <img src="https://raw.githubusercontent.com/ClaimTRX/Test/main/66d7dc9910233_download.jpg" class="card-image" alt="Token Image">
           <div class="telegram-link">
             <a href="https://t.me/babyturu" target="_blank">
               <i class="fab fa-telegram-plane"></i> Join our Telegram
@@ -920,9 +920,8 @@
         await delay(500);
         await updateStakedAmount();
         await delay(500);
-        await updateAvailableCFT();
-        await delay(500);
         await updateTotalStaked();
+        await delay(500);
       } catch (error) {
         console.error('Error updating UI:', error);
       }
@@ -955,14 +954,7 @@
       }
     }
 
-    async function updateAvailableCFT() {
-      try {
-        const availableCFT = await tokenContract.methods.balanceOf(userAddress).call();
-        document.getElementById('available-cft').innerText = 'Available: ' + tronWeb.fromSun(availableCFT) + ' CFT';
-      } catch (error) {
-        console.error('Error fetching available CFT:', error);
-      }
-    }
+   
 
     async function updateTotalStaked() {
       try {
@@ -1046,6 +1038,15 @@
     async function claimRewards() {
       await stakingContract.methods.claimReward().send();
     }
+    // Format number with commas and two decimals
+function formatNumber(num) {
+  return parseFloat(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+// Format whole number with commas
+function formatWholeNumber(num) {
+  return Math.floor(parseFloat(num)).toLocaleString('en-US');
+}
   </script>
 </body>
 </html>
