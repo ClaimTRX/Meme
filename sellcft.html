@@ -12,7 +12,6 @@
       background-color: #1a1a2e;
       color: #fff;
       font-family: Arial, sans-serif;
-        
     }
 
     .sidebar {
@@ -65,13 +64,6 @@
       justify-content: flex-end;
     }
 
-    .topbar a.social-icon {
-      color: white;
-      margin-left: 15px;
-      font-size: 20px;
-      text-decoration: none;
-    }
-
     .topbar button {
       background-color: #4CAF50;
       color: white;
@@ -114,40 +106,9 @@
       grid-gap: 20px;
       width: 100%;
     }
-    .card-title {
-      font-size: 1.5rem;
-    }
 
-    .card-text {
-      font-size: 1rem;
-    }
-
-    .btn-success,
-    .btn-danger,
-    .btn-primary {
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 0.875rem;
-      padding: 8px 16px;
-      width: 20%;
-      margin-top: 10px;
-    }
-
-    .btn-danger {
-      background-color: #ff4c4c;
-    }
-
-    .btn-primary {
-      background-color: #007bff;
-    }
-
-    .form-control {
-      width: 20%;
-      padding: 8px;
-      font-size: 0.875rem;
-      border-radius: 5px;
-      margin-bottom: 10px;
+    .card-text-section {
+      width: 100%;
     }
 
     .card-explanation {
@@ -155,49 +116,32 @@
       font-size: 0.875rem;
     }
 
-    input[type=number] {
-      -moz-appearance: textfield;
-    }
-
-    input[type=number]::-webkit-outer-spin-button,
-    input[type=number]::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-
-    .listing {
-      background-color: #1f4068;
-      border-radius: 10px;
-      padding: 15px;
-      margin-bottom: 15px;
-    }
-
-    .listing button {
-      border: none;
+    .form-control {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
       border-radius: 5px;
-      cursor: pointer;
-      font-size: 0.875rem;
-      padding: 8px 16px;
-      width: 20%;
+      margin-bottom: 10px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
       margin-top: 10px;
     }
 
-    .listing .btn-success {
+    .btn-success {
       background-color: #4CAF50;
     }
 
-    .listing .btn-danger {
+    .btn-danger {
       background-color: #ff4c4c;
     }
 
     /* Mobile responsiveness */
     @media (max-width: 767.98px) {
-      .listing button {
-        font-size: 0.75rem;
-        padding: 6px 12px;
-        width: 100%;
-      }
-
       .sidebar {
         height: auto;
         padding: 10px;
@@ -217,30 +161,30 @@
         margin-left: 0;
       }
 
-      .card-title {
-        font-size: 1.25rem;
+      .card-body {
+        grid-template-columns: 1fr;
       }
 
-      .card-text {
-        font-size: 0.875rem;
-      }
-
-      .btn-success,
-      .btn-danger,
-      .btn-primary {
-        font-size: 0.75rem;
-        padding: 6px 12px;
+      .card-text-section {
         width: 100%;
-      }
-
-      .form-control {
-        font-size: 0.75rem;
-        padding: 6px;
-        width: 100%;
+        padding: 0 10px;
+        margin-bottom: 20px;
       }
 
       .card-explanation {
         margin-top: 20px;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 14px;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 12px;
+        font-size: 14px;
       }
 
       .sidebar .social-links {
@@ -254,18 +198,20 @@
 
     @media (min-width: 768px) {
       .card-body {
-        flex-direction: row;
+        grid-template-columns: 1fr 1fr;
         justify-content: space-between;
-        align-items: flex-start;
       }
 
-      .card-text-section {
-        flex: 1;
-        margin-right: 20px;
+      .form-control {
+        font-size: 1rem;
+      }
+
+      .btn {
+        font-size: 1rem;
       }
 
       .card-explanation {
-        flex: 1;
+        font-size: 1rem;
       }
     }
 
@@ -295,37 +241,41 @@
   <div class="main-content">
     <h1>List your CFT for sale</h1>
     
-   <!-- Marketplace Box -->
-<div class="card mt-4">
-  <div class="card-body">
-    <div class="card-text-section">
-      <h5 class="card-title">Marketplace</h5>
-      <p class="card-text">List your CFT Tokens</p>
-      <input type="number" id="tokenAmount" class="form-control" placeholder="Amount of Tokens">
-      <input type="number" id="pricePerTokenInTRX" class="form-control" placeholder="Total price in TRX">
-      <button id="approveAndListButton" class="btn btn-success">Approve and List</button>
+    <!-- Marketplace Box -->
+    <div class="card mt-4">
+      <div class="card-body">
+        <div class="card-text-section">
+          <h5 class="card-title">Marketplace</h5>
+          <p class="card-text">List your CFT Tokens</p>
+          <input type="number" id="tokenAmount" class="form-control" placeholder="Amount of Tokens">
+          <input type="number" id="pricePerTokenInTRX" class="form-control" placeholder="Total price in TRX">
+          <button id="approveAndListButton" class="btn btn-success">Approve and List</button>
+        </div>
+        <div class="card-explanation">
+          <p>To ensure users can trade their token, the ecosystem treasury will buy back any listed tokens that are not traded P2P within a reasonable timeframe.<br>
+          This only happens if the tokens are listed at the same price the seller bought them at.</p>
+          <p>Orders cannot be filled partially, so keep this in mind when listing your tokens.</p>
+        </div>
+      </div>
     </div>
-    <div class="card-explanation">
-      <p>To ensure users can trade their token the ecossytem tresasury will buy back any listed tokens that are not traded P2P within a resonable timeframe<br>
-      This only happen if the tokens are listed at the same price the seller bought them at.</p>
-      <p>Orders can not be filled partially, so keep this in mind when listing your tokens. </p>
-    </div>
-  </div>
-</div>
 
-<!-- Listed for Sale Box -->
-<div class="card mt-4">
-  <div class="card-body">
-    <div class="card-text-section">
-      <h5 class="card-title">Listed tokens</h5>
-      <div id="listings" class="card-text">Loading...</div>
-    </div>
-    <div class="card-explanation">
-      <p>Listed tokens will appear here. when there are tokens listed for sale at or below marketprice we will close the buy option to ensure users who want to buy CFT<br>
-      will buy them from the Marketplace</p>
+    <!-- Listed for Sale Box -->
+    <div class="card mt-4">
+      <div class="card-body">
+        <div class="card-text-section">
+          <h5 class="card-title">Listed tokens</h5>
+          <div id="listings" class="card-text">Loading...</div>
+        </div>
+        <div class="card-explanation">
+          <p>Listed tokens will appear here. When there are tokens listed for sale at or below market price, we will close the buy option to ensure users who want to buy CFT<br>
+          will buy them from the Marketplace.</p>
+        </div>
+      </div>
     </div>
   </div>
-</div>
+</body>
+</html>
+
 
 
 
