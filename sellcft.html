@@ -818,12 +818,19 @@
 }
 ];
 
-   document.addEventListener('DOMContentLoaded', async () => {
+   // TronLink connection
+document.addEventListener('DOMContentLoaded', async () => {
+    document.getElementById('connect-button').addEventListener('click', connectWallet);
+
     if (await checkTronLinkInstalled()) {
         await initializeTronWeb();
+        setInterval(updateUI, 60000); // Update UI every minute
+    } else {
+        console.error('TronLink is not installed.');
     }
 });
 
+// Check if TronLink is installed
 async function checkTronLinkInstalled() {
     return new Promise((resolve) => {
         const interval = setInterval(() => {
@@ -835,43 +842,59 @@ async function checkTronLinkInstalled() {
     });
 }
 
-async function initializeTronWeb() {
-    tronWeb = window.tronWeb;
-    userAddress = tronWeb.defaultAddress.base58;
-
-    document.getElementById('connect-button').style.display = 'none'; // Hide the button
-
-    console.log('Connected to TronLink.');
-    console.log('User Address:', userAddress);
-
+// Connect the wallet using TronLink
+async function connectWallet() {
     try {
-        const balance = await tronWeb.trx.getBalance(userAddress);
-        console.log('Balance:', tronWeb.fromSun(balance), 'TRX');
+        await tronLink.request({ method: 'tron_requestAccounts' });
+        await initializeTronWeb();
+    } catch (e) {
+        console.error('Failed to connect to TronLink:', e);
+    }
+}
 
-        // Initialize contracts 
+// Initialize TronWeb and the contracts
+async function initializeTronWeb() {
+    try {
+        tronWeb = window.tronWeb;
+        userAddress = tronWeb.defaultAddress.base58;
+
+        if (!userAddress) throw new Error('User address not available');
+
+        // Initialize contracts using ABI and contract addresses
         tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
         marketplaceContract = await tronWeb.contract(marketplaceContractAbi, marketplaceContractAddress);
 
-        updateUI(balance);
+        console.log('Connected to TronLink.');
+        console.log('User Address:', userAddress);
+        console.log('Contracts initialized successfully');
+
+        // Hide connect wallet button once connected
+        document.getElementById('connect-button').style.display = 'none';
+
+        // Update the UI after initializing contracts
+        await updateUI();
+
+        // Setup event listeners
+        setupEventListeners();
     } catch (error) {
-        console.error('Error fetching balance:', error);
+        console.error('Error initializing TronWeb or Contracts:', error);
     }
 }
-      
 
-async function updateUI(balance) {
+// UI update function
+async function updateUI() {
     try {
-       
-        
-        fetchMarketplaceListings();
-
-        setupEventListeners();
+        const balance = await tronWeb.trx.getBalance(userAddress);
+        console.log('Balance:', tronWeb.fromSun(balance), 'TRX');
+        await fetchMarketplaceListings();  // Ensure this function exists
     } catch (error) {
         console.error('Error updating UI:', error);
     }
 }
 
-  document.getElementById('approveAndListButton').addEventListener('click', async () => {
+// Setup event listeners for buttons
+function setupEventListeners() {
+    document.getElementById('approveAndListButton').addEventListener('click', async () => {
         const tokenAmount = document.getElementById('tokenAmount').value;
         const pricePerTokenInTRX = document.getElementById('pricePerTokenInTRX').value;
 
@@ -884,10 +907,16 @@ async function updateUI(balance) {
             }
         }
     });
+}
 
+// Function to refresh the UI
+async function refreshUI() {
+    const balance = await tronWeb.trx.getBalance(userAddress);
+    console.log('Balance refreshed:', tronWeb.fromSun(balance), 'TRX');
+    await fetchMarketplaceListings();
+}
 
-
-
+// Fetch marketplace listings
 async function fetchMarketplaceListings() {
     try {
         const result = await marketplaceContract.methods.getActiveListings().call();
@@ -924,6 +953,7 @@ async function fetchMarketplaceListings() {
     }
 }
 
+// Buy token from the marketplace
 async function buyToken(listingId, totalPrice) {
     try {
         await marketplaceContract.methods.buyToken(listingId).send({
@@ -938,6 +968,7 @@ async function buyToken(listingId, totalPrice) {
     }
 }
 
+// Cancel a listing from the marketplace
 async function cancelListing(listingId) {
     try {
         await marketplaceContract.methods.cancelListing(listingId).send();
@@ -949,6 +980,7 @@ async function cancelListing(listingId) {
     }
 }
 
+// Approve and list tokens for sale
 async function approveAndListTokens(tokenAmount, priceInTRX) {
     const adjustedTokenAmount = tronWeb.toSun(tokenAmount);
     const adjustedPriceInTRX = tronWeb.toSun(priceInTRX);
@@ -964,26 +996,15 @@ async function approveAndListTokens(tokenAmount, priceInTRX) {
     }
 }
 
-async function connectWallet() {
-    if (await checkTronLinkInstalled()) {
-        await initializeTronWeb();
-    } else {
-        console.log('Please install TronLink extension in your browser.');
-    }
-}
-
-
-
-    function formatNumber(num) {
+// Utility function to format numbers
+function formatNumber(num) {
     return parseFloat(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+// Utility function to format whole numbers
 function formatWholeNumber(num) {
     return Math.floor(parseFloat(num)).toLocaleString('en-US');
 }
-
-
-
 
   </script>
 </body>
