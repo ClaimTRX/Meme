@@ -111,6 +111,23 @@
       font-size: 1.5rem;
     }
 
+    .card-image-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .card-image {
+      width: 100%;
+      max-width: 400px;
+      height: auto;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
     .card-text {
       font-size: 1rem;
     }
@@ -201,6 +218,17 @@
         font-size: 0.875rem;
       }
 
+      .card-image-container {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+
+      .card-image {
+        width: 80%; /* Slightly larger image for mobile */
+        max-width: 250px;
+        margin-bottom: 20px;
+      }
+
       .btn {
         font-size: 0.75rem;
         padding: 6px 12px;
@@ -277,16 +305,17 @@
           <input type="number" id="buy-amount" class="form-control" placeholder="Enter amount to buy">
           <button id="buy-button" class="btn btn-success">Buy CFT</button>
         </div>
-        <div class="card-explanation">
-          <p>To buy our ecosystem token CFT you enter the amount of CFT tokens you want to buy and click the "Buy CFT" button.</p>
-          <p>CFT Token can be staked for TRX rewards or used to interact with ecosystem functions.</p>
-          <p>All TRX from CFT Sale is sent to our Treasury and used to generate income for our ecosystem</p>
-          <p>For each million token sold the price increase with 0.1 and "Tokens Left indicate the amount left at current price.</p>
-          <p>CFT is not yet listed, but can be traded on our Marketplace</p>
+        <div class="card-image-container mt-4">
+           <img src="https://raw.githubusercontent.com/ClaimTRX/Test/main/66d7dce3f08bf_download.jpg" class="card-image" alt="Token Image">
+            <!-- Telegram Link -->
+            <div class="telegram-link mt-3">
+              <a href="https://t.me/claimfreetrxnow" target="_blank">
+                <i class="fab fa-telegram-plane"></i> Join our Telegram
+              </a>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
 
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
