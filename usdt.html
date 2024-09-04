@@ -856,7 +856,7 @@
     }
 ];
 
-  // TronLink connection
+   // TronLink connection
 document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('connect-button').addEventListener('click', connectWallet);
 
@@ -896,15 +896,23 @@ async function initializeTronWeb() {
     tronWeb = window.tronWeb;
     userAddress = tronWeb.defaultAddress.base58;
 
+    if (!userAddress) throw new Error('User address not available');
+
+    // Initialize contracts using ABI and contract addresses
+    newStakingContract = await tronWeb.contract(newStakingContractAbi, newStakingContractAddress);
+    tokenContract = await tronWeb.contract(tokenContractAbi, tokenContractAddress);
+
     console.log('Connected to TronLink.');
     console.log('User Address:', userAddress);
+    console.log('Contracts initialized successfully');
 
+    // Hide connect wallet button once connected
     document.getElementById('connect-button').style.display = 'none';
 
-    // Initialize contracts here (newStakingContract, tokenContract initialization using ABI)
+    // Update the UI after initializing contracts
     await updateUI();
   } catch (error) {
-    console.error('Error initializing TronWeb:', error);
+    console.error('Error initializing TronWeb or Contracts:', error);
   }
 }
 
@@ -935,6 +943,8 @@ async function updateUI() {
 // Function to update claimable rewards
 async function updateNewClaimableRewards() {
   try {
+    if (!newStakingContract) throw new Error('Staking contract not initialized');
+    
     const claimableRewards = await newStakingContract.methods.viewPendingReward(userAddress).call();
     document.getElementById('new-claimable-rewards').innerText = formatNumber(tronWeb.fromSun(claimableRewards)) + ' USDT';
   } catch (error) {
@@ -945,6 +955,8 @@ async function updateNewClaimableRewards() {
 // Function to update the staked amount
 async function updateNewStakedAmount() {
   try {
+    if (!newStakingContract) throw new Error('Staking contract not initialized');
+
     const stakedAmount = await newStakingContract.methods.viewStakedAmount(userAddress).call();
     document.getElementById('new-staked-amount').innerText = formatWholeNumber(tronWeb.fromSun(stakedAmount)) + ' CFT';
   } catch (error) {
@@ -955,6 +967,8 @@ async function updateNewStakedAmount() {
 // Function to update staked percentage
 async function updateNewStakedPercentage() {
   try {
+    if (!newStakingContract) throw new Error('Staking contract not initialized');
+
     const stakedAmount = await newStakingContract.methods.viewStakedAmount(userAddress).call();
     const totalStaked = await newStakingContract.methods.viewTotalStaked().call();
     const stakedPercentage = (stakedAmount / totalStaked) * 100;
@@ -967,6 +981,8 @@ async function updateNewStakedPercentage() {
 // Function to update available CFT
 async function updateNewAvailableCFT() {
   try {
+    if (!tokenContract) throw new Error('Token contract not initialized');
+
     const availableCFT = await tokenContract.methods.balanceOf(userAddress).call();
     document.getElementById('new-available-cft').innerText = 'Available CFT: ' + formatWholeNumber(tronWeb.fromSun(availableCFT)) + ' CFT';
   } catch (error) {
@@ -977,6 +993,8 @@ async function updateNewAvailableCFT() {
 // Function to update total USDT claimed
 async function updateTotalUSDTClaimed() {
   try {
+    if (!newStakingContract) throw new Error('Staking contract not initialized');
+
     const totalClaimed = await newStakingContract.methods.viewTotalClaimedRewards(userAddress).call();
     document.getElementById('new-total-claimed').innerText = formatNumber(tronWeb.fromSun(totalClaimed)) + ' USDT';
   } catch (error) {
@@ -987,11 +1005,12 @@ async function updateTotalUSDTClaimed() {
 // Function to calculate APR
 async function calculateApr() {
   try {
+    if (!newStakingContract) throw new Error('Staking contract not initialized');
+
     const dailyReward = await newStakingContract.methods.viewDailyReward().call();
     const totalStaked = await newStakingContract.methods.viewTotalStaked().call();
     const tokenPriceInUsdt = 0.13; // Price of each token in USDT
 
-    // Ensure the values are valid numbers
     if (!dailyReward || !totalStaked || !tokenPriceInUsdt) {
       console.error('Invalid data received for APR calculation');
       document.getElementById('apr').innerText = 'APR: Unable to calculate';
@@ -1092,6 +1111,7 @@ function formatNumber(num) {
 function formatWholeNumber(num) {
   return Math.floor(parseFloat(num)).toLocaleString('en-US');
 }
+
   </script>
 </body>
 </html>
