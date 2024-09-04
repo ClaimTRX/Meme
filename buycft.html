@@ -794,6 +794,16 @@
         } else {
             console.error('TronLink is not installed.');
         }
+      document.getElementById('buy-button').addEventListener('click', async () => {
+    const amount = document.getElementById('buy-amount').value;
+    if (!amount || amount <= 0) {
+        alert('Please enter a valid amount to buy.');
+        return;
+    }
+    await buyTokens(amount);
+    await refreshUI();
+});
+
     });
 
     // Check if TronLink is installed
