@@ -394,13 +394,6 @@
       }
     }
 
-    function switchLanguage(language) {
-      if (language === 'zh') {
-        window.location.href = 'treasury_zh.html';
-      } else {
-        window.location.href = 'treasury.html';
-      }
-    }
 
     async function connectWallet() {
       if (await checkTronLinkInstalled()) {
