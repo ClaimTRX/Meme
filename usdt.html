@@ -989,11 +989,8 @@ async function updateUI() {
     await delay(500);
     await updateNewStakedPercentage();
     await delay(500);
-    await updateNewAvailableCFT();
-    await delay(500);
-    await updateTotalUSDTClaimed();
-    await delay(500);
     await calculateApr();
+    await delay(500);
   } catch (error) {
     console.error('Error updating UI:', error);
   }
@@ -1037,29 +1034,9 @@ async function updateNewStakedPercentage() {
   }
 }
 
-// Function to update available CFT
-async function updateNewAvailableCFT() {
-  try {
-    if (!tokenContract) throw new Error('Token contract not initialized');
 
-    const availableCFT = await tokenContract.methods.balanceOf(userAddress).call();
-    document.getElementById('new-available-cft').innerText = 'Available CFT: ' + formatWholeNumber(tronWeb.fromSun(availableCFT)) + ' CFT';
-  } catch (error) {
-    console.error('Error fetching available CFT:', error);
-  }
-}
 
-// Function to update total USDT claimed
-async function updateTotalUSDTClaimed() {
-  try {
-    if (!newStakingContract) throw new Error('Staking contract not initialized');
 
-    const totalClaimed = await newStakingContract.methods.viewTotalClaimedRewards(userAddress).call();
-    document.getElementById('new-total-claimed').innerText = formatNumber(tronWeb.fromSun(totalClaimed)) + ' USDT';
-  } catch (error) {
-    console.error('Error fetching total claimed USDT:', error);
-  }
-}
 
 // Function to calculate APR
 async function calculateApr() {
@@ -1068,7 +1045,7 @@ async function calculateApr() {
 
     const dailyReward = await newStakingContract.methods.viewDailyReward().call();
     const totalStaked = await newStakingContract.methods.viewTotalStaked().call();
-    const tokenPriceInUsdt = 0.13; // Price of each token in USDT
+    const tokenPriceInUsdt = 0.15; // Price of each token in USDT
 
     if (!dailyReward || !totalStaked || !tokenPriceInUsdt) {
       console.error('Invalid data received for APR calculation');
